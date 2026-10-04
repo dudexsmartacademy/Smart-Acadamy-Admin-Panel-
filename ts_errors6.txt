@@ -1,0 +1,216 @@
+﻿src/components/common/index.ts(25,15): error TS2307: Cannot find module './SectionHeader' or its corresponding type declarations.
+src/pages/academic/BatchesPage.tsx(59,16): error TS2345: Argument of type 'Promise<AcademicBatch[]>' is not assignable to parameter of type 'SetStateAction<AcademicBatch[]>'.
+src/pages/academic/BatchesPage.tsx(122,31): error TS2339: Property 'find' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/BatchesPage.tsx(287,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/ClassesPage.tsx(67,16): error TS2345: Argument of type 'Promise<AcademicClass[]>' is not assignable to parameter of type 'SetStateAction<AcademicClass[]>'.
+src/pages/academic/ClassesPage.tsx(137,31): error TS2339: Property 'find' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/ClassesPage.tsx(138,29): error TS2339: Property 'find' does not exist on type 'Promise<AcademicSubject[]>'.
+src/pages/academic/ClassesPage.tsx(139,30): error TS2339: Property 'find' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/academic/ClassesPage.tsx(305,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/ClassesPage.tsx(320,27): error TS2339: Property 'map' does not exist on type 'Promise<AcademicSubject[]>'.
+src/pages/academic/ClassesPage.tsx(337,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/academic/SubjectsPage.tsx(52,17): error TS2345: Argument of type 'Promise<AcademicSubject[]>' is not assignable to parameter of type 'SetStateAction<AcademicSubject[]>'.
+src/pages/academic/SubjectsPage.tsx(109,31): error TS2339: Property 'find' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/SubjectsPage.tsx(267,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/activity-logs/ActivityLogsPage.tsx(40,13): error TS2345: Argument of type 'Promise<ActivityLog[]>' is not assignable to parameter of type 'SetStateAction<ActivityLog[]>'.
+src/pages/auth/LoginPage.tsx(49,48): error TS2554: Expected 2 arguments, but got 3.
+src/pages/general/AdminUsersPage.tsx(26,51): error TS2345: Argument of type '() => Promise<AdminUser[]>' is not assignable to parameter of type 'AdminUser[] | (() => AdminUser[])'.
+  Type '() => Promise<AdminUser[]>' is not assignable to type '() => AdminUser[]'.
+    Type 'Promise<AdminUser[]>' is missing the following properties from type 'AdminUser[]': length, pop, push, concat, and 29 more.
+src/pages/general/AdminUsersPage.tsx(27,56): error TS2339: Property 'getRoles' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/general/AdminUsersPage.tsx(46,14): error TS2345: Argument of type 'Promise<AdminUser[]>' is not assignable to parameter of type 'SetStateAction<AdminUser[]>'.
+src/pages/general/AdminUsersPage.tsx(99,9): error TS2322: Type 'string' is not assignable to type 'AdminRoleName'.
+src/pages/general/AdminUsersPage.tsx(109,9): error TS2322: Type 'string' is not assignable to type 'AdminRoleName'.
+src/pages/general/AdminUsersPage.tsx(123,22): error TS2339: Property 'toggleAdminUserStatus' does not exist on type '{ getAdminUsers: () => Promise<AdminUser[]>; createAdminUser: (userData: Partial<AdminUser>) => Promise<AdminUser>; updateAdminUser: (id: string, updates: Partial<...>) => Promise<...>; deleteAdminUser: (id: string) => Promise<...>; }'.
+src/pages/general/AnalyticsPage.tsx(63,39): error TS2339: Property 'reduce' does not exist on type 'Promise<PaymentTransaction[]>'.
+src/pages/general/AnalyticsPage.tsx(64,41): error TS2339: Property 'reduce' does not exist on type 'Promise<FeeRecord[]>'.
+src/pages/general/AnalyticsPage.tsx(66,14): error TS2339: Property 'reduce' does not exist on type 'Promise<Student[]>'.
+src/pages/general/AnalyticsPage.tsx(66,78): error TS2339: Property 'length' does not exist on type 'Promise<Student[]>'.
+src/pages/general/AnalyticsPage.tsx(69,14): error TS2339: Property 'reduce' does not exist on type 'Promise<Student[]>'.
+src/pages/general/AnalyticsPage.tsx(69,70): error TS2339: Property 'length' does not exist on type 'Promise<Student[]>'.
+src/pages/general/AnalyticsPage.tsx(83,34): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/general/AnalyticsPage.tsx(107,6): error TS2339: Property 'filter' does not exist on type 'Promise<Student[]>'.
+src/pages/general/AnalyticsPage.tsx(276,21): error TS2339: Property 'map' does not exist on type 'Promise<Teacher[]>'.
+src/pages/general/AnalyticsPage.tsx(298,20): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/general/AnalyticsPage.tsx(389,65): error TS2339: Property 'length' does not exist on type 'Promise<StudentExam[]>'.
+src/pages/general/AnnouncementsPage.tsx(69,18): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/general/AnnouncementsPage.tsx(70,36): error TS2339: Property 'getBatches' does not exist on type '{ getAcademicBatches: () => Promise<AcademicBatch[]>; getAcademicBatchById: (id: string) => Promise<AcademicBatch>; createAcademicBatch: (batchData: Partial<...>) => Promise<...>; updateAcademicBatch: (id: string, updates: Partial<...>) => Promise<...>; deleteAcademicBatch: (id: string) => Promise<...>; }'.
+src/pages/general/AnnouncementsPage.tsx(73,19): error TS2339: Property 'map' does not exist on type 'Promise<Teacher[]>'.
+src/pages/general/AnnouncementsPage.tsx(75,19): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/general/AnnouncementsPage.tsx(81,24): error TS2345: Argument of type 'Promise<Announcement[]>' is not assignable to parameter of type 'SetStateAction<Announcement[]>'.
+src/pages/general/AnnouncementsPage.tsx(153,7): error TS2353: Object literal may only specify known properties, and 'courseId' does not exist in type 'Partial<Announcement>'.
+src/pages/general/CalendarPage.tsx(31,57): error TS2345: Argument of type '() => Promise<CalendarEvent[]>' is not assignable to parameter of type 'CalendarEvent[] | (() => CalendarEvent[])'.
+  Type '() => Promise<CalendarEvent[]>' is not assignable to type '() => CalendarEvent[]'.
+    Type 'Promise<CalendarEvent[]>' is missing the following properties from type 'CalendarEvent[]': length, pop, push, concat, and 29 more.
+src/pages/general/CalendarPage.tsx(111,15): error TS2345: Argument of type 'Promise<CalendarEvent[]>' is not assignable to parameter of type 'SetStateAction<CalendarEvent[]>'.
+src/pages/general/CalendarPage.tsx(113,33): error TS2339: Property 'title' does not exist on type 'Promise<CalendarEvent>'.
+src/pages/general/CalendarPage.tsx(493,29): error TS2345: Argument of type 'Promise<CalendarEvent[]>' is not assignable to parameter of type 'SetStateAction<CalendarEvent[]>'.
+src/pages/general/CentralNotificationsPage.tsx(72,18): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/general/CentralNotificationsPage.tsx(73,36): error TS2339: Property 'getBatches' does not exist on type '{ getAcademicBatches: () => Promise<AcademicBatch[]>; getAcademicBatchById: (id: string) => Promise<AcademicBatch>; createAcademicBatch: (batchData: Partial<...>) => Promise<...>; updateAcademicBatch: (id: string, updates: Partial<...>) => Promise<...>; deleteAcademicBatch: (id: string) => Promise<...>; }'.
+src/pages/general/CentralNotificationsPage.tsx(76,19): error TS2339: Property 'map' does not exist on type 'Promise<Teacher[]>'.
+src/pages/general/CentralNotificationsPage.tsx(78,19): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/general/CentralNotificationsPage.tsx(84,24): error TS2345: Argument of type 'Promise<CentralNotification[]>' is not assignable to parameter of type 'SetStateAction<CentralNotification[]>'.
+src/pages/general/CentralNotificationsPage.tsx(108,46): error TS2367: This comparison appears to be unintentional because the types '"Teachers Only" | "Students Only" | "Specific Course" | "Specific Batch" | "Specific Section" | "Specific Teacher" | "Specific Student"' and '"Common Both Student + Teacher"' have no overlap.
+src/pages/general/CentralNotificationsPage.tsx(169,7): error TS2353: Object literal may only specify known properties, and 'courseId' does not exist in type 'Partial<CentralNotification>'.
+src/pages/general/CentralNotificationsPage.tsx(196,34): error TS2339: Property 'markNotificationAsUnread' does not exist on type '{ getCentralNotifications: () => Promise<CentralNotification[]>; sendCentralNotification: (notificationData: Partial<CentralNotification>) => Promise<...>; deleteCentralNotification: (id: string) => Promise<...>; }'.
+src/pages/general/CentralNotificationsPage.tsx(199,34): error TS2339: Property 'markNotificationAsRead' does not exist on type '{ getCentralNotifications: () => Promise<CentralNotification[]>; sendCentralNotification: (notificationData: Partial<CentralNotification>) => Promise<...>; deleteCentralNotification: (id: string) => Promise<...>; }'.
+src/pages/general/CentralNotificationsPage.tsx(206,32): error TS2339: Property 'markAllNotificationsAsRead' does not exist on type '{ getCentralNotifications: () => Promise<CentralNotification[]>; sendCentralNotification: (notificationData: Partial<CentralNotification>) => Promise<...>; deleteCentralNotification: (id: string) => Promise<...>; }'.
+src/pages/general/CentralNotificationsPage.tsx(212,32): error TS2551: Property 'duplicateCentralNotification' does not exist on type '{ getCentralNotifications: () => Promise<CentralNotification[]>; sendCentralNotification: (notificationData: Partial<CentralNotification>) => Promise<...>; deleteCentralNotification: (id: string) => Promise<...>; }'. Did you mean 'deleteCentralNotification'?
+src/pages/general/CentralNotificationsPage.tsx(232,12): error TS2678: Type '"error"' is not comparable to type '"warning" | "info" | "success" | "alert"'.
+src/pages/general/ClassroomsPage.tsx(62,21): error TS2345: Argument of type 'Promise<Classroom[]>' is not assignable to parameter of type 'SetStateAction<Classroom[]>'.
+src/pages/general/ContentManagementPage.tsx(22,62): error TS2345: Argument of type '() => Promise<ContentSection[]>' is not assignable to parameter of type 'ContentSection[] | (() => ContentSection[])'.
+  Type '() => Promise<ContentSection[]>' is not assignable to type '() => ContentSection[]'.
+    Type 'Promise<ContentSection[]>' is missing the following properties from type 'ContentSection[]': length, pop, push, concat, and 29 more.
+src/pages/general/ContentManagementPage.tsx(58,19): error TS2345: Argument of type 'Promise<ContentSection[]>' is not assignable to parameter of type 'SetStateAction<ContentSection[]>'.
+src/pages/general/ContentManagementPage.tsx(59,41): error TS2339: Property 'title' does not exist on type 'Promise<boolean>'.
+src/pages/general/ReportsPage.tsx(69,45): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/general/ReportsPage.tsx(82,45): error TS2339: Property 'map' does not exist on type 'Promise<Teacher[]>'.
+src/pages/general/ReportsPage.tsx(93,41): error TS2339: Property 'getAttendanceRecords' does not exist on type '{ getStudentAttendanceRecords: (studentId?: string) => Promise<StudentAttendance[]>; markStudentAttendance: (records: Partial<StudentAttendance>[]) => Promise<...>; updateStudentAttendanceRecord: (id: string, status: AttendanceStatus, remarks?: string) => Promise<...>; }'.
+src/pages/general/ReportsPage.tsx(103,39): error TS2339: Property 'map' does not exist on type 'Promise<StudentExam[]>'.
+src/pages/general/ReportsPage.tsx(115,43): error TS2339: Property 'map' does not exist on type 'Promise<StudentResult[]>'.
+src/pages/general/ReportsPage.tsx(127,43): error TS2339: Property 'map' does not exist on type 'Promise<FeeRecord[]>'.
+src/pages/general/ReportsPage.tsx(140,41): error TS2339: Property 'map' does not exist on type 'Promise<PaymentTransaction[]>'.
+src/pages/general/ReportsPage.tsx(151,51): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/general/ReportsPage.tsx(162,37): error TS2339: Property 'getBatches' does not exist on type '{ getAcademicBatches: () => Promise<AcademicBatch[]>; getAcademicBatchById: (id: string) => Promise<AcademicBatch>; createAcademicBatch: (batchData: Partial<...>) => Promise<...>; updateAcademicBatch: (id: string, updates: Partial<...>) => Promise<...>; deleteAcademicBatch: (id: string) => Promise<...>; }'.
+src/pages/general/ReportsPage.tsx(173,32): error TS2339: Property 'getRecentLogs' does not exist on type '{ log(action: string, module: "system" | "teachers" | "students" | "admissions" | "enrollments" | "attendance" | "applications" | "courses" | "classes" | "classrooms" | "assignments" | ... 13 more ... | "storage", entity: string, description: string): Promise<...>; getLogs(limit?: number): Promise<...>; clearLogs():...'.
+src/pages/general/RolesPermissionsPage.tsx(21,84): error TS2339: Property 'getRoles' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/general/RolesPermissionsPage.tsx(28,43): error TS2339: Property 'getRoles' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/general/RolesPermissionsPage.tsx(63,43): error TS2339: Property 'updateRole' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/general/RolesPermissionsPage.tsx(91,43): error TS2339: Property 'createRole' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/general/RolesPermissionsPage.tsx(117,45): error TS2339: Property 'deleteRole' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/general/SlideBannersPage.tsx(22,55): error TS2345: Argument of type '() => Promise<SlideBanner[]>' is not assignable to parameter of type 'SlideBanner[] | (() => SlideBanner[])'.
+  Type '() => Promise<SlideBanner[]>' is not assignable to type '() => SlideBanner[]'.
+    Type 'Promise<SlideBanner[]>' is missing the following properties from type 'SlideBanner[]': length, pop, push, concat, and 29 more.
+src/pages/general/SlideBannersPage.tsx(44,15): error TS2345: Argument of type 'Promise<SlideBanner[]>' is not assignable to parameter of type 'SetStateAction<SlideBanner[]>'.
+src/pages/general/SlideBannersPage.tsx(46,28): error TS2339: Property 'find' does not exist on type 'Promise<SlideBanner[]>'.
+src/pages/general/SlideBannersPage.tsx(94,20): error TS2551: Property 'updateSlideBanner' does not exist on type '{ getSlideBanners: () => Promise<SlideBanner[]>; createSlideBanner: (slideData: Partial<SlideBanner>) => Promise<SlideBanner>; deleteSlideBanner: (id: string) => Promise<...>; }'. Did you mean 'createSlideBanner'?
+src/pages/general/SlideBannersPage.tsx(106,18): error TS2339: Property 'toggleSlideBannerStatus' does not exist on type '{ getSlideBanners: () => Promise<SlideBanner[]>; createSlideBanner: (slideData: Partial<SlideBanner>) => Promise<SlideBanner>; deleteSlideBanner: (id: string) => Promise<...>; }'.
+src/pages/general/StorageFilesPage.tsx(24,53): error TS2345: Argument of type '() => Promise<StorageFile[]>' is not assignable to parameter of type 'StorageFile[] | (() => StorageFile[])'.
+  Type '() => Promise<StorageFile[]>' is not assignable to type '() => StorageFile[]'.
+    Type 'Promise<StorageFile[]>' is missing the following properties from type 'StorageFile[]': length, pop, push, concat, and 29 more.
+src/pages/general/StorageFilesPage.tsx(40,14): error TS2345: Argument of type 'Promise<StorageFile[]>' is not assignable to parameter of type 'SetStateAction<StorageFile[]>'.
+src/pages/general/StorageFilesPage.tsx(67,24): error TS2551: Property 'createStorageFile' does not exist on type '{ getStorageFiles: () => Promise<StorageFile[]>; deleteStorageFile: (id: string) => Promise<boolean>; }'. Did you mean 'getStorageFiles'?
+src/pages/general/StorageFilesPage.tsx(103,12): error TS2678: Type '"Spreadsheet"' is not comparable to type '"PDF" | "Image" | "Document" | "Archive" | "Audio" | "Video"'.
+src/pages/general/StorageFilesPage.tsx(105,12): error TS2678: Type '"Code"' is not comparable to type '"PDF" | "Image" | "Document" | "Archive" | "Audio" | "Video"'.
+src/pages/portal-management/PortalNavigationPage.tsx(22,68): error TS2345: Argument of type '() => Promise<PortalNavigationItem[]>' is not assignable to parameter of type 'PortalNavigationItem[] | (() => PortalNavigationItem[])'.
+  Type '() => Promise<PortalNavigationItem[]>' is not assignable to type '() => PortalNavigationItem[]'.
+    Type 'Promise<PortalNavigationItem[]>' is missing the following properties from type 'PortalNavigationItem[]': length, pop, push, concat, and 29 more.
+src/pages/portal-management/PortalNavigationPage.tsx(28,17): error TS2345: Argument of type 'Promise<PortalNavigationItem[]>' is not assignable to parameter of type 'SetStateAction<PortalNavigationItem[]>'.
+src/pages/portal-management/PortalNavigationPage.tsx(41,29): error TS2551: Property 'reorderPortalNavigation' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'. Did you mean 'getPortalNavigation'?
+src/pages/portal-management/PortalNavigationPage.tsx(55,29): error TS2551: Property 'reorderPortalNavigation' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'. Did you mean 'getPortalNavigation'?
+src/pages/portal-management/PortalNavigationPage.tsx(62,45): error TS2551: Property 'updatePortalNavigationItem' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'. Did you mean 'updatePortalNavigation'?
+src/pages/portal-management/PortalNavigationPage.tsx(66,19): error TS2345: Argument of type 'Promise<PortalNavigationItem[]>' is not assignable to parameter of type 'SetStateAction<PortalNavigationItem[]>'.
+src/pages/portal-management/PortalPermissionsPage.tsx(24,51): error TS2339: Property 'getTeacherPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/PortalPermissionsPage.tsx(25,51): error TS2339: Property 'getStudentPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/PortalPermissionsPage.tsx(26,39): error TS2339: Property 'getRoles' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/portal-management/PortalPreviewModal.tsx(33,6): error TS2339: Property 'filter' does not exist on type 'Promise<PortalNavigationItem[]>'.
+src/pages/portal-management/PortalPreviewModal.tsx(36,33): error TS2339: Property 'getTeacherPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/PortalPreviewModal.tsx(37,33): error TS2339: Property 'getStudentPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/StudentPortalControlPage.tsx(21,29): error TS2339: Property 'getStudentPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/StudentPortalControlPage.tsx(38,45): error TS2339: Property 'updateStudentPortalControl' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/StudentPortalControlPage.tsx(43,43): error TS2339: Property 'getStudentPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/StudentPortalControlPage.tsx(50,45): error TS2339: Property 'resetStudentPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/TeacherPortalControlPage.tsx(25,29): error TS2339: Property 'getTeacherPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/TeacherPortalControlPage.tsx(44,45): error TS2339: Property 'updateTeacherPortalControl' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/TeacherPortalControlPage.tsx(49,43): error TS2339: Property 'getTeacherPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/TeacherPortalControlPage.tsx(56,45): error TS2339: Property 'resetTeacherPortalControls' does not exist on type '{ getPortalTeacherControls: () => Promise<PortalFeatureControl[]>; getPortalStudentControls: () => Promise<PortalFeatureControl[]>; updatePortalFeatureControl: (id: string, updates: Partial<...>) => Promise<...>; getPortalNavigation: (portal: "teacher" | "student") => Promise<...>; updatePortalNavigation: (id: strin...'.
+src/pages/portal-management/TeacherPortalControlPage.tsx(126,23): error TS2339: Property 'map' does not exist on type 'Promise<Teacher[]>'.
+src/pages/students/AdmissionsPage.tsx(25,3): error TS2305: Module '"../../services/admissionService"' has no exported member 'convertAdmissionToStudent'.
+src/pages/students/AdmissionsPage.tsx(56,19): error TS2345: Argument of type 'Promise<StudentAdmission[]>' is not assignable to parameter of type 'SetStateAction<StudentAdmission[]>'.
+src/pages/students/AdmissionsPage.tsx(323,24): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/students/AtRiskStudentsPage.tsx(60,27): error TS2339: Property 'length' does not exist on type 'Promise<Student[]>'.
+src/pages/students/AtRiskStudentsPage.tsx(67,28): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/students/CertificatesPage.tsx(24,3): error TS2305: Module '"../../services/certificateService"' has no exported member 'updateCertificateStatus'.
+src/pages/students/CertificatesPage.tsx(48,21): error TS2345: Argument of type 'Promise<StudentCertificate[]>' is not assignable to parameter of type 'SetStateAction<StudentCertificate[]>'.
+src/pages/students/CertificatesPage.tsx(69,33): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/CertificatesPage.tsx(83,20): error TS2345: Argument of type 'Promise<StudentCertificate>' is not assignable to parameter of type 'SetStateAction<StudentCertificate>'.
+src/pages/students/CertificatesPage.tsx(290,25): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/students/CertificatesPage.tsx(305,24): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/students/EnrollmentsPage.tsx(49,20): error TS2345: Argument of type 'Promise<StudentEnrollment[]>' is not assignable to parameter of type 'SetStateAction<StudentEnrollment[]>'.
+src/pages/students/EnrollmentsPage.tsx(71,33): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/EnrollmentsPage.tsx(72,31): error TS2339: Property 'find' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/students/EnrollmentsPage.tsx(73,30): error TS2339: Property 'find' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/students/EnrollmentsPage.tsx(196,25): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/students/EnrollmentsPage.tsx(211,24): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/students/EnrollmentsPage.tsx(226,24): error TS2339: Property 'map' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/students/ExamsPage.tsx(58,14): error TS2345: Argument of type 'Promise<StudentExam[]>' is not assignable to parameter of type 'SetStateAction<StudentExam[]>'.
+src/pages/students/ExamsPage.tsx(219,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/students/ExamsPage.tsx(233,27): error TS2339: Property 'map' does not exist on type 'Promise<AcademicSubject[]>'.
+src/pages/students/FeesPage.tsx(25,25): error TS2339: Property 'filter' does not exist on type 'Promise<FeeRecord[]>'.
+src/pages/students/FeesPage.tsx(39,28): error TS2339: Property 'reduce' does not exist on type 'Promise<FeeRecord[]>'.
+src/pages/students/FeesPage.tsx(40,31): error TS2339: Property 'reduce' does not exist on type 'Promise<FeeRecord[]>'.
+src/pages/students/FeesPage.tsx(41,31): error TS2339: Property 'reduce' does not exist on type 'Promise<FeeRecord[]>'.
+src/pages/students/MarkAttendancePage.tsx(19,3): error TS2724: '"../../services/studentAttendanceService"' has no exported member named 'getStudentAttendance'. Did you mean 'markStudentAttendance'?
+src/pages/students/MarkAttendancePage.tsx(20,3): error TS2305: Module '"../../services/studentAttendanceService"' has no exported member 'saveBulkBatchAttendance'.
+src/pages/students/MarkAttendancePage.tsx(32,10): error TS2339: Property 'forEach' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/students/MarkAttendancePage.tsx(54,24): error TS2339: Property 'filter' does not exist on type 'Promise<Student[]>'.
+src/pages/students/PaymentsPage.tsx(52,17): error TS2345: Argument of type 'Promise<PaymentTransaction[]>' is not assignable to parameter of type 'SetStateAction<PaymentTransaction[]>'.
+src/pages/students/PaymentsPage.tsx(73,33): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/PaymentsPage.tsx(80,28): error TS2339: Property 'find' does not exist on type 'Promise<FeeRecord[]>'.
+src/pages/students/PaymentsPage.tsx(200,25): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/students/ResultDetailPage.tsx(16,10): error TS2724: '"../../services/resultService"' has no exported member named 'getResultsByStudent'. Did you mean 'getResultsByStudentId'?
+src/pages/students/ResultDetailPage.tsx(33,23): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/ResultDetailPage.tsx(40,25): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/ResultsPage.tsx(46,16): error TS2345: Argument of type 'Promise<StudentResult[]>' is not assignable to parameter of type 'SetStateAction<StudentResult[]>'.
+src/pages/students/ResultsPage.tsx(53,10): error TS2339: Property 'forEach' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/students/StudentAssignmentsPage.tsx(250,25): error TS2339: Property 'slice' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentAssignmentsPage.tsx(305,24): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/students/StudentAttendanceDetailPage.tsx(19,3): error TS2724: '"../../services/studentAttendanceService"' has no exported member named 'getStudentAttendance'. Did you mean 'markStudentAttendance'?
+src/pages/students/StudentAttendanceDetailPage.tsx(31,36): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentAttendanceDetailPage.tsx(44,37): error TS2339: Property 'getSubjectWiseAttendance' does not exist on type '{ getStudentAttendanceRecords: (studentId?: string) => Promise<StudentAttendance[]>; markStudentAttendance: (records: Partial<StudentAttendance>[]) => Promise<...>; updateStudentAttendanceRecord: (id: string, status: AttendanceStatus, remarks?: string) => Promise<...>; }'.
+src/pages/students/StudentAttendancePage.tsx(21,10): error TS2724: '"../../services/studentAttendanceService"' has no exported member named 'getStudentAttendance'. Did you mean 'markStudentAttendance'?
+src/pages/students/StudentAttendancePage.tsx(31,10): error TS2339: Property 'forEach' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/students/StudentAttendancePage.tsx(54,24): error TS2339: Property 'filter' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentClassesPage.tsx(27,29): error TS2339: Property 'flatMap' does not exist on type 'Promise<AcademicClass[]>'.
+src/pages/students/StudentClassesPage.tsx(29,31): error TS2339: Property 'filter' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentFormPage.tsx(124,13): error TS2322: Type 'string | string[]' is not assignable to type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/pages/students/StudentFormPage.tsx(193,38): error TS2345: Argument of type '{ fullName: string; dob: string; gender: string; phone: string; email: string; address: string; profileImage: string; studentId: string; department: string; course: string; batch: string; section: string; ... 10 more ...; notes: string; }' is not assignable to parameter of type 'Partial<Student>'.
+  Types of property 'gender' are incompatible.
+    Type 'string' is not assignable to type 'Gender'.
+src/pages/students/StudentFormPage.tsx(197,43): error TS2345: Argument of type '{ fullName: string; dob: string; gender: string; phone: string; email: string; address: string; profileImage: string; studentId: string; department: string; course: string; batch: string; section: string; ... 10 more ...; notes: string; }' is not assignable to parameter of type 'Partial<Student>'.
+  Types of property 'gender' are incompatible.
+    Type 'string' is not assignable to type 'Gender'.
+src/pages/students/StudentPerformancePage.tsx(57,17): error TS2339: Property 'length' does not exist on type 'Promise<StudentResult[]>'.
+src/pages/students/StudentPerformancePage.tsx(58,25): error TS2339: Property 'reduce' does not exist on type 'Promise<StudentResult[]>'.
+src/pages/students/StudentPerformancePage.tsx(59,37): error TS2339: Property 'length' does not exist on type 'Promise<StudentResult[]>'.
+src/pages/students/StudentPerformancePage.tsx(63,18): error TS2339: Property 'length' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentPerformancePage.tsx(64,26): error TS2339: Property 'reduce' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentPerformancePage.tsx(65,38): error TS2339: Property 'length' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentPerformancePage.tsx(83,11): error TS2322: Type '{ title: string; value: string; icon: Element; change: string; changeType: string; }' is not assignable to type 'IntrinsicAttributes & StatCardProps'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & StatCardProps'.
+src/pages/students/StudentPerformancePage.tsx(90,11): error TS2322: Type '{ title: string; value: string; icon: Element; change: string; changeType: string; }' is not assignable to type 'IntrinsicAttributes & StatCardProps'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & StatCardProps'.
+src/pages/students/StudentPerformancePage.tsx(97,11): error TS2322: Type '{ title: string; value: string; icon: Element; change: string; changeType: string; }' is not assignable to type 'IntrinsicAttributes & StatCardProps'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & StatCardProps'.
+src/pages/students/StudentPerformancePage.tsx(104,11): error TS2322: Type '{ title: string; value: any; icon: Element; change: string; changeType: string; onClick: () => void | Promise<void>; }' is not assignable to type 'IntrinsicAttributes & StatCardProps'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & StatCardProps'.
+src/pages/students/StudentPerformancePage.tsx(105,25): error TS2339: Property 'length' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentPerformancePage.tsx(210,18): error TS2339: Property 'filter' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentProfileDetailPage.tsx(33,10): error TS2339: Property 'forEach' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/students/StudentProfileDetailPage.tsx(72,12): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentProfileDetailPage.tsx(77,40): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentProfileDetailPage.tsx(164,20): error TS2345: Argument of type 'Promise<Student>' is not assignable to parameter of type 'SetStateAction<Student>'.
+src/pages/students/StudentProfilesPage.tsx(29,10): error TS2339: Property 'forEach' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/students/StudentProfilesPage.tsx(44,17): error TS2345: Argument of type 'Promise<Student[]>' is not assignable to parameter of type 'SetStateAction<Student[]>'.
+src/pages/students/StudentQueriesPage.tsx(30,3): error TS2724: '"../../services/studentQueryService"' has no exported member named 'updateStudentQuery'. Did you mean 'updateStudentQueryStatus'?
+src/pages/students/StudentQueriesPage.tsx(57,16): error TS2345: Argument of type 'Promise<StudentQuery[]>' is not assignable to parameter of type 'SetStateAction<StudentQuery[]>'.
+src/pages/students/StudentQueriesPage.tsx(141,31): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/pages/students/StudentQueriesPage.tsx(145,24): error TS2345: Argument of type 'Promise<Student>' is not assignable to parameter of type 'SetStateAction<Student>'.
+src/pages/students/StudentSchedulePage.tsx(89,28): error TS2339: Property 'slice' does not exist on type 'Promise<AcademicClass[]>'.
+src/pages/students/StudentSchedulePage.tsx(127,24): error TS2339: Property 'length' does not exist on type 'Promise<AcademicClass[]>'.
+src/pages/students/StudentSchedulePage.tsx(132,22): error TS2339: Property 'map' does not exist on type 'Promise<AcademicClass[]>'.
+src/pages/teacher-applications/TeacherApplicationsPage.tsx(65,47): error TS2339: Property 'getApplications' does not exist on type '{ getAll(): Promise<TeacherApplication[]>; getById(id: string): Promise<TeacherApplication>; create(data: Partial<TeacherApplication>): Promise<...>; updateStatus(id: string, status: ApplicationStatus, notes?: string): Promise<...>; delete(id: string): Promise<...>; }'.
+src/pages/teacher-applications/TeacherApplicationsPage.tsx(102,31): error TS2339: Property 'updateApplicationStatus' does not exist on type '{ getAll(): Promise<TeacherApplication[]>; getById(id: string): Promise<TeacherApplication>; create(data: Partial<TeacherApplication>): Promise<...>; updateStatus(id: string, status: ApplicationStatus, notes?: string): Promise<...>; delete(id: string): Promise<...>; }'.
+src/pages/teacher-applications/TeacherApplicationsPage.tsx(112,46): error TS2339: Property 'convertToTeacher' does not exist on type '{ getAll(): Promise<TeacherApplication[]>; getById(id: string): Promise<TeacherApplication>; create(data: Partial<TeacherApplication>): Promise<...>; updateStatus(id: string, status: ApplicationStatus, notes?: string): Promise<...>; delete(id: string): Promise<...>; }'.
+src/pages/teacher-applications/TeacherApplicationsPage.tsx(136,33): error TS2339: Property 'deleteApplication' does not exist on type '{ getAll(): Promise<TeacherApplication[]>; getById(id: string): Promise<TeacherApplication>; create(data: Partial<TeacherApplication>): Promise<...>; updateStatus(id: string, status: ApplicationStatus, notes?: string): Promise<...>; delete(id: string): Promise<...>; }'.
+src/pages/teacher-attendance/TeacherAttendanceDetailPage.tsx(134,18): error TS2345: Argument of type 'Promise<Teacher>' is not assignable to parameter of type 'SetStateAction<Teacher>'.
+src/pages/teacher-attendance/TeacherAttendanceDetailPage.tsx(139,24): error TS2339: Property 'id' does not exist on type 'Promise<Teacher>'.
+src/pages/teacher-attendance/TeacherAttendanceDetailPage.tsx(145,11): error TS2345: Argument of type 'Promise<Teacher>' is not assignable to parameter of type 'Teacher'.
+  Type 'Promise<Teacher>' is missing the following properties from type 'Teacher': id, teacherId, fullName, email, and 18 more.
+src/pages/teacher-attendance/TeacherAttendancePage.tsx(42,8): error TS2339: Property 'slice' does not exist on type 'Promise<Teacher[]>'.
+src/pages/teacher-leave/TeacherLeaveDetailPage.tsx(77,16): error TS2345: Argument of type 'Promise<Teacher>' is not assignable to parameter of type 'SetStateAction<Teacher>'.
+src/pages/teacher-leave/TeacherLeaveDetailPage.tsx(82,22): error TS2339: Property 'id' does not exist on type 'Promise<Teacher>'.
+src/pages/teacher-leave/TeacherLeavePage.tsx(34,8): error TS2339: Property 'slice' does not exist on type 'Promise<Teacher[]>'.
+src/pages/teachers/TeacherProfileDetailPage.tsx(37,18): error TS2345: Argument of type 'Promise<Teacher>' is not assignable to parameter of type 'SetStateAction<Teacher>'.
+src/pages/teachers/TeacherProfileDetailPage.tsx(58,20): error TS2345: Argument of type 'Promise<Teacher>' is not assignable to parameter of type 'SetStateAction<Teacher>'.

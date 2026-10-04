@@ -101,3 +101,9 @@ export const enrollmentService = {
   updateEnrollmentStatus,
   deleteEnrollment,
 };
+
+// Convenience filter alias
+export const getEnrollmentsByStudent = async (studentId: string): Promise<StudentEnrollment[]> => {
+  const all = await getEnrollments();
+  return all.filter((e) => e.studentId === studentId);
+};

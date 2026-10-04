@@ -39,10 +39,10 @@ import {
   updateStudentStatus,
 } from '../../services/studentService';
 import { getEnrollmentsByStudent } from '../../services/enrollmentService';
-import { getStudentAttendance } from '../../services/studentAttendanceService';
-import { getResultsByStudent } from '../../services/resultService';
-import { getFeesByStudent, getPaymentsByStudent } from '../../services/feeService';
-import { getCertificatesByStudent } from '../../services/certificateService';
+import { getStudentAttendanceRecords } from '../../services/studentAttendanceService';
+import { getResultsByStudentId } from '../../services/resultService';
+import { getFeeRecords, getPayments } from '../../services/feeService';
+import { getCertificates } from '../../services/certificateService';
 import { getExams } from '../../services/examService';
 import { getAcademicClasses } from '../../services/academicClassService';
 import { getActivityLogs } from '../../services/activityService';
@@ -66,20 +66,50 @@ export const StudentDetailPage: React.FC = () => {
 
   const [student, setStudent] = useState<Student | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
-
-  const loadStudent = () => {
-    if (!studentId) return;
-    const found = getStudentById(studentId);
-    if (found) {
-      setStudent(found);
-    } else {
-      showToast('Student record not found.', 'error');
-      navigate('/admin/students/list');
-    }
-  };
+  const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
+  const [results, setResults] = useState<any[]>([]);
+  const [fees, setFees] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [certificates, setCertificates] = useState<any[]>([]);
+  const [upcomingExams, setUpcomingExams] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
-    loadStudent();
+    if (!studentId) return;
+    getStudentById(studentId).then((found) => {
+      if (!found) {
+        showToast('Student record not found.', 'error');
+        navigate('/admin/students/list');
+        return;
+      }
+      setStudent(found);
+      Promise.all([
+        getEnrollmentsByStudent(found.id),
+        getStudentAttendanceRecords(found.id),
+        getResultsByStudentId(found.id),
+        getFeeRecords(),
+        getPayments(),
+        getCertificates(),
+        getExams(),
+        getAcademicClasses(),
+        getActivityLogs(),
+      ]).then(([enr, att, res, allFees, allPay, allCerts, exams, cls, acts]) => {
+        setEnrollments(enr);
+        setAttendanceRecords(att);
+        setResults(res);
+        setFees(allFees.filter((f: any) => f.studentId === found.id));
+        setPayments(allPay.filter((p: any) => p.studentId === found.id));
+        setCertificates(allCerts.filter((c: any) => c.studentId === found.id));
+        setUpcomingExams(exams.filter((e: any) => e.status === 'Scheduled'));
+        setClasses(cls.filter((c: any) => c.courseName === found.course || c.courseName === found.courseName));
+        setActivities(acts.filter((a: any) =>
+          (a.description || a.details || '').includes(found.fullName) ||
+          (a.description || a.details || '').includes(found.studentId)
+        ));
+      });
+    });
   }, [studentId]);
 
   if (!student) {
@@ -90,23 +120,11 @@ export const StudentDetailPage: React.FC = () => {
     );
   }
 
-  // Related data
-  const enrollments = getEnrollmentsByStudent(student.id);
-  const attendanceRecords = getStudentAttendance(student.id);
-  const results = getResultsByStudent(student.id);
-  const fees = getFeesByStudent(student.id);
-  const payments = getPaymentsByStudent(student.id);
-  const certificates = getCertificatesByStudent(student.id);
-  const upcomingExams = getExams().filter((e) => e.status === 'Scheduled');
-  const classes = getAcademicClasses().filter((c) => c.courseName === student.course);
-  const activities = getActivityLogs().filter(
-    (a) => a.details.includes(student.fullName) || a.details.includes(student.studentId)
-  );
-
-  const handleStatusToggle = () => {
+  const handleStatusToggle = async () => {
     const nextStatus = student.status === 'Active' ? 'Inactive' : 'Active';
-    updateStudentStatus(student.id, nextStatus);
-    loadStudent();
+    await updateStudentStatus(student.id, nextStatus);
+    const updated = await getStudentById(student.id);
+    if (updated) setStudent(updated);
     showToast(`Student status updated to ${nextStatus}`, 'success');
   };
 
@@ -698,7 +716,7 @@ export const StudentDetailPage: React.FC = () => {
                   <div className="w-2 h-2 rounded-full bg-[#946246] mt-1.5 shrink-0" />
                   <div className="flex-1">
                     <div className="font-semibold text-[#F5F0EA]">{act.action}</div>
-                    <div className="text-[#A89A91] mt-0.5">{act.details}</div>
+                    <div className="text-[#A89A91] mt-0.5">{act.description || act.details || ''}</div>
                   </div>
                   <span className="text-[10px] font-mono text-[#A89A91]">
                     {new Date(act.timestamp).toLocaleDateString()}
