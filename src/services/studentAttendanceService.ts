@@ -85,8 +85,33 @@ export const updateStudentAttendanceRecord = async (id: string, status: Attendan
   return !error;
 };
 
+export const getStudentAttendance = getStudentAttendanceRecords;
+export const saveBulkBatchAttendance = markStudentAttendance;
+
+export const getSubjectWiseAttendance = async (studentId: string) => {
+  const records = await getStudentAttendanceRecords(studentId);
+  const subjectsMap: Record<string, { total: number; present: number }> = {};
+  for (const r of records) {
+    const subj = r.subjectName || r.subject || 'General';
+    if (!subjectsMap[subj]) subjectsMap[subj] = { total: 0, present: 0 };
+    subjectsMap[subj].total += 1;
+    if (r.status === 'present' || r.status === 'late' || r.status === 'Present' || r.status === 'Late') {
+      subjectsMap[subj].present += 1;
+    }
+  }
+  return Object.entries(subjectsMap).map(([subject, counts]) => ({
+    subject,
+    totalClasses: counts.total,
+    attendedClasses: counts.present,
+    percentage: counts.total > 0 ? Math.round((counts.present / counts.total) * 100) : 0,
+  }));
+};
+
 export const studentAttendanceService = {
   getStudentAttendanceRecords,
+  getStudentAttendance,
   markStudentAttendance,
+  saveBulkBatchAttendance,
   updateStudentAttendanceRecord,
+  getSubjectWiseAttendance,
 };

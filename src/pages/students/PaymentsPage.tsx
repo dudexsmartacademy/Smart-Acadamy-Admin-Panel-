@@ -23,7 +23,7 @@ import {
   getFees,
 } from '../../services/feeService';
 import { getStudents } from '../../services/studentService';
-import { PaymentTransaction } from '../../types';
+import { FeeRecord, PaymentTransaction, Student } from '../../types';
 
 export const PaymentsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,13 +31,12 @@ export const PaymentsPage: React.FC = () => {
   const { showToast } = useToast();
 
   const [payments, setPayments] = useState<PaymentTransaction[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [fees, setFees] = useState<FeeRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const students = getStudents();
-  const fees = getFees();
-
-  const preselectedStudent = searchParams.get('studentId') || students[0]?.id || '';
+  const preselectedStudent = searchParams.get('studentId') || '';
 
   const [formData, setFormData] = useState({
     studentId: preselectedStudent,
@@ -48,8 +47,20 @@ export const PaymentsPage: React.FC = () => {
     remarks: 'Tuition installment receipt verified.',
   });
 
-  const loadData = () => {
-    setPayments(getPayments());
+  const loadData = async () => {
+    const [pmts, stus, feeList] = await Promise.all([
+      getPayments(),
+      getStudents(),
+      getFees(),
+    ]);
+    setPayments(pmts);
+    setStudents(stus);
+    setFees(feeList);
+
+    if (stus.length > 0 && !formData.studentId) {
+      const selected = searchParams.get('studentId') || stus[0].id;
+      setFormData((prev) => ({ ...prev, studentId: selected }));
+    }
   };
 
   useEffect(() => {
@@ -68,7 +79,7 @@ export const PaymentsPage: React.FC = () => {
     return true;
   });
 
-  const handleRecordPayment = (e: React.FormEvent) => {
+  const handleRecordPayment = async (e: React.FormEvent) => {
     e.preventDefault();
     const selStudent = students.find((s) => s.id === formData.studentId);
     if (!selStudent) {
@@ -76,14 +87,13 @@ export const PaymentsPage: React.FC = () => {
       return;
     }
 
-    // Find active fee record for student
     const feeRecord = fees.find((f) => f.studentId === selStudent.id);
     if (!feeRecord) {
       showToast('No outstanding fee record found for student.', 'error');
       return;
     }
 
-    recordPayment({
+    await recordPayment({
       feeRecordId: feeRecord.id,
       studentId: selStudent.id,
       studentName: selStudent.fullName,
@@ -96,7 +106,7 @@ export const PaymentsPage: React.FC = () => {
 
     showToast(`Recorded payment of $${formData.amount} for ${selStudent.fullName}!`, 'success');
     setIsModalOpen(false);
-    loadData();
+    await loadData();
   };
 
   return (

@@ -30,26 +30,30 @@ export const SubjectsPage: React.FC = () => {
   const { showToast } = useToast();
 
   const [subjects, setSubjects] = useState<AcademicSubject[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<AcademicSubject | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AcademicSubject | null>(null);
 
-  const courses = getAcademicCourses();
-
   const [formData, setFormData] = useState({
     name: '',
     subjectCode: '',
-    courseId: courses[0]?.id || '',
-    courseName: courses[0]?.name || 'Full-Stack Web Development',
+    courseId: '',
+    courseName: '',
     teacherId: 'tch-1',
     teacherName: 'Dr. Sarah Jenkins',
     description: '',
     status: 'Active' as AcademicSubject['status'],
   });
 
-  const loadData = () => {
-    setSubjects(getAcademicSubjects());
+  const loadData = async () => {
+    const [subList, crsList] = await Promise.all([
+      getAcademicSubjects(),
+      getAcademicCourses(),
+    ]);
+    setSubjects(subList);
+    setCourses(crsList);
   };
 
   useEffect(() => {
@@ -99,7 +103,7 @@ export const SubjectsPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.subjectCode.trim()) {
       showToast('Subject name and code are required.', 'error');
@@ -109,13 +113,13 @@ export const SubjectsPage: React.FC = () => {
     const selCourse = courses.find((c) => c.id === formData.courseId);
 
     if (editingSubject) {
-      updateAcademicSubject(editingSubject.id, {
+      await updateAcademicSubject(editingSubject.id, {
         ...formData,
         courseName: selCourse?.name || formData.courseName,
       });
       showToast(`Subject "${formData.name}" updated!`, 'success');
     } else {
-      createAcademicSubject({
+      await createAcademicSubject({
         ...formData,
         courseName: selCourse?.name || formData.courseName,
       });
@@ -123,15 +127,15 @@ export const SubjectsPage: React.FC = () => {
     }
 
     setIsModalOpen(false);
-    loadData();
+    await loadData();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteTarget) {
-      deleteAcademicSubject(deleteTarget.id);
+      await deleteAcademicSubject(deleteTarget.id);
       showToast(`Subject "${deleteTarget.name}" deleted.`, 'warning');
       setDeleteTarget(null);
-      loadData();
+      await loadData();
     }
   };
 

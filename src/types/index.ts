@@ -647,7 +647,7 @@ export interface CalendarEvent {
   description?: string;
 }
 
-export type AudienceType = 'All Users' | 'Teachers Only' | 'Students Only' | 'Specific Course' | 'Specific Batch' | 'Specific Section' | 'Specific Teacher' | 'Specific Student';
+export type AudienceType = 'All Users' | 'Teachers Only' | 'Students Only' | 'Specific Course' | 'Specific Batch' | 'Specific Section' | 'Specific Teacher' | 'Specific Student' | 'Common Both Student + Teacher';
 export type AnnouncementPriority = 'Low' | 'Normal' | 'High';
 export type AnnouncementStatus = 'Draft' | 'Published' | 'Archived';
 
@@ -656,7 +656,9 @@ export interface Announcement {
   title: string;
   content: string;
   audience: AudienceType;
+  courseId?: string;
   courseName?: string;
+  batchId?: string;
   batchName?: string;
   section?: string;
   specificTeacherName?: string;
@@ -676,7 +678,9 @@ export interface CentralNotification {
   type: 'info' | 'warning' | 'success' | 'alert';
   priority: 'Low' | 'Normal' | 'High';
   audience: AudienceType;
+  courseId?: string;
   courseName?: string;
+  batchId?: string;
   batchName?: string;
   section?: string;
   specificTeacherName?: string;
@@ -685,6 +689,8 @@ export interface CentralNotification {
   status: 'Sent' | 'Scheduled' | 'Draft';
   createdAt: string;
   scheduledDate?: string;
+  scheduledFor?: string;
+  expiryDate?: string;
   recipientsCount: number;
   readCount: number;
   unreadCount: number;
@@ -780,7 +786,7 @@ export interface SlideBanner {
 export interface StorageFile {
   id: string;
   name: string;
-  fileType: 'PDF' | 'Image' | 'Document' | 'Archive' | 'Audio' | 'Video';
+  fileType: 'PDF' | 'Image' | 'Document' | 'Archive' | 'Audio' | 'Video' | 'Spreadsheet' | 'Code';
   sizeBytes: number;
   sizeFormatted: string;
   ownerName: string;

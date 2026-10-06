@@ -24,29 +24,46 @@ import {
 import { getStudents } from '../../services/studentService';
 import { getAcademicCourses } from '../../services/academicCourseService';
 import { getAcademicBatches } from '../../services/academicBatchService';
-import { StudentEnrollment } from '../../types';
+import { AcademicBatch, AcademicCourse, Student, StudentEnrollment } from '../../types';
 
 export const EnrollmentsPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
   const [enrollments, setEnrollments] = useState<StudentEnrollment[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [courses, setCourses] = useState<AcademicCourse[]>([]);
+  const [batches, setBatches] = useState<AcademicBatch[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const students = getStudents();
-  const courses = getAcademicCourses();
-  const batches = getAcademicBatches();
-
   const [formData, setFormData] = useState({
-    studentId: students[0]?.id || '',
-    courseId: courses[0]?.id || '',
-    batchId: batches[0]?.id || '',
+    studentId: '',
+    courseId: '',
+    batchId: '',
     feePlan: 'Semester Basis ($1,200/sem)' as StudentEnrollment['feePlan'],
   });
 
-  const loadData = () => {
-    setEnrollments(getEnrollments());
+  const loadData = async () => {
+    const [enrs, stus, crs, bts] = await Promise.all([
+      getEnrollments(),
+      getStudents(),
+      getAcademicCourses(),
+      getAcademicBatches(),
+    ]);
+    setEnrollments(enrs);
+    setStudents(stus);
+    setCourses(crs);
+    setBatches(bts);
+
+    if (stus.length > 0 && !formData.studentId) {
+      setFormData((prev) => ({
+        ...prev,
+        studentId: stus[0].id,
+        courseId: crs[0]?.id || '',
+        batchId: bts[0]?.id || '',
+      }));
+    }
   };
 
   useEffect(() => {
@@ -66,7 +83,7 @@ export const EnrollmentsPage: React.FC = () => {
     return true;
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const selStudent = students.find((s) => s.id === formData.studentId);
     const selCourse = courses.find((c) => c.id === formData.courseId);
@@ -77,7 +94,7 @@ export const EnrollmentsPage: React.FC = () => {
       return;
     }
 
-    createEnrollment({
+    await createEnrollment({
       studentId: selStudent.id,
       studentName: selStudent.fullName,
       courseId: selCourse.id,
@@ -89,7 +106,7 @@ export const EnrollmentsPage: React.FC = () => {
 
     showToast(`Enrolled ${selStudent.fullName} into ${selCourse.name}!`, 'success');
     setIsModalOpen(false);
-    loadData();
+    await loadData();
   };
 
   return (

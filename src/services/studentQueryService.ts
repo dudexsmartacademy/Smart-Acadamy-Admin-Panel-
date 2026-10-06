@@ -54,7 +54,10 @@ export const updateStudentQueryStatus = async (id: string, status: StudentQueryS
   return !error;
 };
 
+export const updateStudentQuery = updateStudentQueryStatus;
+
 export const studentQueryService = {
   getStudentQueries,
   updateStudentQueryStatus,
+  updateStudentQuery,
 };

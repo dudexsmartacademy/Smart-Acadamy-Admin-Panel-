@@ -70,6 +70,38 @@ export const sendCentralNotification = async (notificationData: Partial<CentralN
   return rowToNotification(data);
 };
 
+export const markNotificationAsRead = async (id: string): Promise<boolean> => {
+  const { error } = await supabase.from('notifications').update({ read: true }).eq('id', id);
+  return !error;
+};
+
+export const markNotificationAsUnread = async (id: string): Promise<boolean> => {
+  const { error } = await supabase.from('notifications').update({ read: false }).eq('id', id);
+  return !error;
+};
+
+export const markAllNotificationsAsRead = async (): Promise<boolean> => {
+  const { error } = await supabase.from('notifications').update({ read: true }).eq('read', false);
+  return !error;
+};
+
+export const duplicateCentralNotification = async (id: string): Promise<CentralNotification | null> => {
+  const { data } = await supabase.from('notifications').select('*').eq('id', id).single();
+  if (!data) return null;
+  return sendCentralNotification({
+    title: `${data.title} (Copy)`,
+    message: data.message,
+    type: data.type,
+    priority: data.priority,
+    audience: data.audience,
+    courseName: data.course_name,
+    batchName: data.batch_name,
+    section: data.section,
+    actionUrl: data.action_url,
+    status: 'Draft',
+  });
+};
+
 export const deleteCentralNotification = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from('notifications').delete().eq('id', id);
   return !error;
@@ -79,4 +111,8 @@ export const centralNotificationService = {
   getCentralNotifications,
   sendCentralNotification,
   deleteCentralNotification,
+  markNotificationAsRead,
+  markNotificationAsUnread,
+  markAllNotificationsAsRead,
+  duplicateCentralNotification,
 };

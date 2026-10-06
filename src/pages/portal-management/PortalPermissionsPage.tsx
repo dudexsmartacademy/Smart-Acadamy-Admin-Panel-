@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -16,14 +16,29 @@ import {
 import { portalManagementService } from '../../services/portalManagementService';
 import { rolePermissionService } from '../../services/rolePermissionService';
 import { PortalPreviewModal } from './PortalPreviewModal';
+import { PortalFeatureControl, RolePermission } from '../../types';
 
 export const PortalPermissionsPage: React.FC = () => {
   const navigate = useNavigate();
   const [previewPortal, setPreviewPortal] = useState<'teacher' | 'student' | null>(null);
 
-  const teacherControls = portalManagementService.getTeacherPortalControls();
-  const studentControls = portalManagementService.getStudentPortalControls();
-  const roles = rolePermissionService.getRoles();
+  const [teacherControls, setTeacherControls] = useState<PortalFeatureControl[]>([]);
+  const [studentControls, setStudentControls] = useState<PortalFeatureControl[]>([]);
+  const [roles, setRoles] = useState<RolePermission[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const [tc, sc, r] = await Promise.all([
+        portalManagementService.getTeacherPortalControls(),
+        portalManagementService.getStudentPortalControls(),
+        rolePermissionService.getRoles(),
+      ]);
+      setTeacherControls(tc);
+      setStudentControls(sc);
+      setRoles(r);
+    };
+    load();
+  }, []);
 
   return (
     <div className="space-y-8 animate-fadeIn">

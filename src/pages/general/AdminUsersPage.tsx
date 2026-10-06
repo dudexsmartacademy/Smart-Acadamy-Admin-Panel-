@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Shield,
   Plus,
@@ -23,8 +23,8 @@ import { useToast } from '../../context/ToastContext';
 
 export const AdminUsersPage: React.FC = () => {
   const { showToast } = useToast();
-  const [users, setUsers] = useState<AdminUser[]>(() => adminUserService.getAdminUsers());
-  const [roles] = useState(() => rolePermissionService.getRoles());
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [roles, setRoles] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -42,9 +42,18 @@ export const AdminUsersPage: React.FC = () => {
     avatar: '',
   });
 
-  const loadData = () => {
-    setUsers(adminUserService.getAdminUsers());
+  const loadData = async () => {
+    const [uList, rList] = await Promise.all([
+      adminUserService.getAdminUsers(),
+      rolePermissionService.getRolesPermissions(),
+    ]);
+    setUsers(uList);
+    setRoles(rList);
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
@@ -84,7 +93,7 @@ export const AdminUsersPage: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleSaveForm = (e: React.FormEvent) => {
+  const handleSaveForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fullName.trim() || !formData.email.trim()) {
       showToast('Name and email are required', 'error');
@@ -92,21 +101,21 @@ export const AdminUsersPage: React.FC = () => {
     }
 
     if (editingUser) {
-      adminUserService.updateAdminUser(editingUser.id, {
+      await adminUserService.updateAdminUser(editingUser.id, {
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
-        role: formData.role,
+        role: formData.role as any,
         status: formData.status,
         avatar: formData.avatar,
       });
       showToast('Administrator profile updated', 'success');
     } else {
-      adminUserService.createAdminUser({
+      await adminUserService.createAdminUser({
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
-        role: formData.role,
+        role: formData.role as any,
         status: formData.status,
         avatar:
           formData.avatar ||
@@ -116,21 +125,22 @@ export const AdminUsersPage: React.FC = () => {
     }
 
     setIsFormOpen(false);
-    loadData();
+    await loadData();
   };
 
-  const handleToggleStatus = (id: string, name: string) => {
-    adminUserService.toggleAdminUserStatus(id);
-    loadData();
+  const handleToggleStatus = async (id: string, name: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'Active' ? 'Deactivated' : 'Active';
+    await adminUserService.updateAdminUser(id, { status: newStatus as any });
+    await loadData();
     showToast(`Account status updated for ${name}`, 'info');
   };
 
-  const handleDelete = (id: string, name: string) => {
+  const handleDelete = async (id: string, name: string) => {
     if (confirm(`Remove administrator user "${name}"?`)) {
-      const deleted = adminUserService.deleteAdminUser(id);
+      const deleted = await adminUserService.deleteAdminUser(id);
       if (deleted) {
         showToast(`Administrator account "${name}" deleted`, 'info');
-        loadData();
+        await loadData();
       } else {
         showToast('Super Admin primary account cannot be deleted', 'error');
       }
@@ -262,7 +272,7 @@ export const AdminUsersPage: React.FC = () => {
 
             <div className="flex items-center justify-between pt-4 border-t border-white/5">
               <button
-                onClick={() => handleToggleStatus(user.id, user.fullName)}
+                onClick={() => handleToggleStatus(user.id, user.fullName, user.status)}
                 className={`text-xs font-semibold px-2.5 py-1 rounded-lg transition-all ${
                   user.status === 'Active'
                     ? 'bg-neutral-900 text-neutral-400 hover:text-amber-400'

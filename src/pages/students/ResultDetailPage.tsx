@@ -26,165 +26,33 @@ export const ResultDetailPage: React.FC = () => {
   const [selectedAssessmentModal, setSelectedAssessmentModal] = useState<StudentResult | null>(null);
 
   useEffect(() => {
-    let s: Student | undefined;
-    if (studentId) {
-      s =
-        getStudentById(studentId) ||
-        getStudents().find(
-          (item) => item.id === studentId || item.studentId === studentId
-        );
-    }
+    const load = async () => {
+      let s: Student | null = null;
+      if (studentId) {
+        s = await getStudentById(studentId);
+        if (!s) {
+          const stus = await getStudents();
+          s = stus.find((item) => item.id === studentId || item.studentId === studentId) || null;
+        }
+      }
 
-    if (!s) {
-      // Fallback default student (Naveen J.K.)
-      s = getStudents().find((item) => item.id === 'stu-naveen-01') || {
-        id: 'stu-naveen-01',
-        studentId: 'STU-2026-000',
-        fullName: 'Naveen J.K.',
-        email: 'naveen.jk@gmail.com',
-        phone: '+91 98765 43210',
-        dob: '2004-05-15',
-        gender: 'male',
-        address: 'No. 42, Tech Corridor Avenue, Bengaluru, Karnataka - 560100',
-        department: 'Artificial Intelligence & Data Science',
-        course: 'B.E. / B.Tech',
-        courseName: 'Full Stack AI Engineering',
-        batch: 'Batch 1',
-        section: 'Section B',
-        academicYear: '2026-2027',
-        admissionDate: '2024-08-01',
-        guardianName: 'Jayakumar',
-        guardianPhone: '+91 91234 56789',
-        guardianEmail: 'jayakumar@gmail.com',
-        emergencyContact: '+91 91234 56789',
-        status: 'active',
-        feeStatus: 'paid',
-        attendancePercentage: 84.6,
-      };
-    }
+      if (!s) {
+        const stus = await getStudents();
+        s = stus.find((item) => item.id === 'stu-naveen-01') || stus[0] || null;
+      }
 
-    setStudent(s);
+      if (!s) return;
+      setStudent(s);
 
-    // Fetch assessments for this student
-    const studentAssessments = getResultsByStudent(s.id);
-
-    if (studentAssessments.length > 0) {
+      const studentAssessments = await getResultsByStudent(s.id);
       setAssessments(studentAssessments);
-      if (resultId) {
+      if (resultId && studentAssessments.length > 0) {
         const target = studentAssessments.find((r) => r.id === resultId);
         if (target) setSelectedAssessmentModal(target);
       }
-    } else {
-      // Default assessments matching Screenshot 5
-      const mockAssessments: StudentResult[] = [
-        {
-          id: 'res-nav-01',
-          studentId: s.id,
-          studentName: s.fullName,
-          examId: 'exm-01',
-          examTitle: 'Python Basics & Control Flow',
-          subjectName: 'Python',
-          assessmentType: 'MCQ',
-          publishedDate: '02 Sep 2026',
-          submittedAt: '02 Sep 2026 11:30 AM',
-          marksObtained: 18,
-          maxMarks: 20,
-          percentage: 90.0,
-          grade: 'A+',
-          resultStatus: 'pass',
-          courseName: 'Full Stack AI Engineering',
-          resultScreenshotUrl:
-            'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=900',
-          feedback:
-            'Exceptional command of control flow, generators, and standard library data structures.',
-        },
-        {
-          id: 'res-nav-02',
-          studentId: s.id,
-          studentName: s.fullName,
-          examId: 'exm-02',
-          examTitle: 'SQL Foundations: Tables & Joins',
-          subjectName: 'DBMS',
-          assessmentType: 'MCQ',
-          publishedDate: '28 Aug 2026',
-          submittedAt: '28 Aug 2026 02:15 PM',
-          marksObtained: 42,
-          maxMarks: 50,
-          percentage: 84.0,
-          grade: 'A',
-          resultStatus: 'pass',
-          courseName: 'Full Stack AI Engineering',
-          resultScreenshotUrl:
-            'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=900',
-          feedback:
-            'Solid comprehension of normalized schema designs, left/outer joins, and index optimizations.',
-        },
-        {
-          id: 'res-nav-03',
-          studentId: s.id,
-          studentName: s.fullName,
-          examId: 'exm-03',
-          examTitle: 'Loops, Logic & Fast Pointers',
-          subjectName: 'Data Structures',
-          assessmentType: 'Coding',
-          publishedDate: '20 Aug 2026',
-          submittedAt: '20 Aug 2026 04:45 PM',
-          marksObtained: 88,
-          maxMarks: 100,
-          percentage: 88.0,
-          grade: 'A',
-          resultStatus: 'pass',
-          courseName: 'Full Stack AI Engineering',
-          resultScreenshotUrl:
-            'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&q=80&w=900',
-          feedback:
-            'All hidden test cases passed. Algorithm executed with linear runtime and optimal auxiliary memory.',
-        },
-        {
-          id: 'res-nav-04',
-          studentId: s.id,
-          studentName: s.fullName,
-          examId: 'exm-04',
-          examTitle: 'Data Types, Immutability & Scope',
-          subjectName: 'Python Foundations',
-          assessmentType: 'MCQ',
-          publishedDate: '12 Aug 2026',
-          submittedAt: '12 Aug 2026 10:00 AM',
-          marksObtained: 17,
-          maxMarks: 20,
-          percentage: 85.0,
-          grade: 'A',
-          resultStatus: 'pass',
-          courseName: 'Full Stack AI Engineering',
-          resultScreenshotUrl:
-            'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=900',
-          feedback:
-            'Strong understanding of memory allocation and pass-by-object reference semantics.',
-        },
-        {
-          id: 'res-ddx-007',
-          studentId: s.id,
-          studentName: s.fullName,
-          examId: 'exm-ddx-02',
-          examTitle: 'DudeX AI Coding Challenge 2',
-          subjectName: 'AI & Data Science',
-          assessmentType: 'Coding',
-          publishedDate: '28 Sep 2026',
-          submittedAt: '28 Sep 2026 10:15 AM',
-          marksObtained: 28,
-          maxMarks: 30,
-          percentage: 93.33,
-          grade: 'A+',
-          resultStatus: 'pass',
-          courseName: 'Full Stack AI Engineering',
-          resultScreenshotUrl:
-            'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=900',
-          feedback:
-            'Cohort leader in dynamic programming challenge with sub-20ms execution.',
-        },
-      ];
-      setAssessments(mockAssessments);
-    }
+    };
+
+    load();
   }, [studentId, resultId]);
 
   // Overall statistics for Top Card (Screenshot 5)

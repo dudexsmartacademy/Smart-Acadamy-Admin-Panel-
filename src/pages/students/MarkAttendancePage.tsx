@@ -20,33 +20,40 @@ import {
   saveBulkBatchAttendance,
 } from '../../services/studentAttendanceService';
 import { useToast } from '../../context/ToastContext';
-import { Student } from '../../types';
+import { AcademicBatch, Student } from '../../types';
 
 export const MarkAttendancePage: React.FC = () => {
   const { showToast } = useToast();
 
-  // Batches
-  const allBatches = useMemo(() => {
-    const list = getAcademicBatches();
-    const batchNames = ['All Batches', 'Batch 1', 'Batch 2', 'Batch 3'];
-    list.forEach((b) => {
-      if (!batchNames.includes(b.name)) {
-        batchNames.push(b.name);
-      }
-    });
-    return batchNames;
-  }, []);
-
+  const [allBatches, setAllBatches] = useState<string[]>(['Batch 1']);
+  const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [selectedBatch, setSelectedBatch] = useState<string>('Batch 1');
   const [isBatchDropdownOpen, setIsBatchDropdownOpen] = useState<boolean>(false);
-
-  // Date (defaults to 08-09-2026 as shown in screenshot or ISO formatted)
   const [selectedDate, setSelectedDate] = useState<string>('2026-09-08');
 
-  // Students list from student service
-  const allStudents = useMemo(() => getStudents(), []);
+  const [attendanceState, setAttendanceState] = useState<
+    Record<string, 'Present' | 'Absent' | 'Late'>
+  >({});
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
-  // Filtered students by batch
+  useEffect(() => {
+    const loadRefs = async () => {
+      const [bts, stus] = await Promise.all([
+        getAcademicBatches(),
+        getStudents(),
+      ]);
+      const batchNames = ['All Batches', 'Batch 1', 'Batch 2', 'Batch 3'];
+      bts.forEach((b) => {
+        if (!batchNames.includes(b.name)) {
+          batchNames.push(b.name);
+        }
+      });
+      setAllBatches(batchNames);
+      setAllStudents(stus);
+    };
+    loadRefs();
+  }, []);
+
   const displayedStudents = useMemo(() => {
     if (selectedBatch === 'All Batches') {
       return allStudents;
@@ -62,17 +69,8 @@ export const MarkAttendancePage: React.FC = () => {
     );
   }, [allStudents, selectedBatch]);
 
-  // Attendance status mapping: studentId -> 'Present' | 'Absent' | 'Late'
-  const [attendanceState, setAttendanceState] = useState<
-    Record<string, 'Present' | 'Absent' | 'Late'>
-  >({});
-
-  // Selection checkboxes
-  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
-
-  // Initialize or load attendance for the selected date & batch
-  const loadExistingAttendance = () => {
-    const records = getStudentAttendance();
+  const loadExistingAttendance = async () => {
+    const records = await getStudentAttendance();
     const mapping: Record<string, 'Present' | 'Absent' | 'Late'> = {};
 
     displayedStudents.forEach((student) => {
@@ -82,13 +80,11 @@ export const MarkAttendancePage: React.FC = () => {
       if (match) {
         mapping[student.id] = (match.status as 'Present' | 'Absent' | 'Late') || 'Present';
       } else {
-        // default status
         mapping[student.id] = 'Present';
       }
     });
 
     setAttendanceState(mapping);
-    // Keep selection unselected initially so user can check particular students
     setSelectedStudentIds([]);
   };
 

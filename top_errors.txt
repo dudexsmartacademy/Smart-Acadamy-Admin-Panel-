@@ -1,0 +1,35 @@
+﻿src/components/common/index.ts(25,15): error TS2307: Cannot find module './SectionHeader' or its corresponding type declarations.
+src/pages/academic/BatchesPage.tsx(59,16): error TS2345: Argument of type 'Promise<AcademicBatch[]>' is not assignable to parameter of type 'SetStateAction<AcademicBatch[]>'.
+src/pages/academic/BatchesPage.tsx(122,31): error TS2339: Property 'find' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/BatchesPage.tsx(287,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/ClassesPage.tsx(67,16): error TS2345: Argument of type 'Promise<AcademicClass[]>' is not assignable to parameter of type 'SetStateAction<AcademicClass[]>'.
+src/pages/academic/ClassesPage.tsx(137,31): error TS2339: Property 'find' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/ClassesPage.tsx(138,29): error TS2339: Property 'find' does not exist on type 'Promise<AcademicSubject[]>'.
+src/pages/academic/ClassesPage.tsx(139,30): error TS2339: Property 'find' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/academic/ClassesPage.tsx(305,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/ClassesPage.tsx(320,27): error TS2339: Property 'map' does not exist on type 'Promise<AcademicSubject[]>'.
+src/pages/academic/ClassesPage.tsx(337,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicBatch[]>'.
+src/pages/academic/SubjectsPage.tsx(52,17): error TS2345: Argument of type 'Promise<AcademicSubject[]>' is not assignable to parameter of type 'SetStateAction<AcademicSubject[]>'.
+src/pages/academic/SubjectsPage.tsx(109,31): error TS2339: Property 'find' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/academic/SubjectsPage.tsx(267,26): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/activity-logs/ActivityLogsPage.tsx(40,13): error TS2345: Argument of type 'Promise<ActivityLog[]>' is not assignable to parameter of type 'SetStateAction<ActivityLog[]>'.
+src/pages/auth/LoginPage.tsx(49,48): error TS2554: Expected 2 arguments, but got 3.
+src/pages/general/AdminUsersPage.tsx(26,51): error TS2345: Argument of type '() => Promise<AdminUser[]>' is not assignable to parameter of type 'AdminUser[] | (() => AdminUser[])'.
+src/pages/general/AdminUsersPage.tsx(27,56): error TS2339: Property 'getRoles' does not exist on type '{ getRolesPermissions: () => Promise<RolePermission[]>; updateRolePermissions: (roleId: string, modulePermissions: { module: string; canView: boolean; canCreate: boolean; canEdit: boolean; ... 4 more ...; canManage: boolean; }[]) => Promise<...>; }'.
+src/pages/general/AdminUsersPage.tsx(46,14): error TS2345: Argument of type 'Promise<AdminUser[]>' is not assignable to parameter of type 'SetStateAction<AdminUser[]>'.
+src/pages/general/AdminUsersPage.tsx(99,9): error TS2322: Type 'string' is not assignable to type 'AdminRoleName'.
+src/pages/general/AdminUsersPage.tsx(109,9): error TS2322: Type 'string' is not assignable to type 'AdminRoleName'.
+src/pages/general/AdminUsersPage.tsx(123,22): error TS2339: Property 'toggleAdminUserStatus' does not exist on type '{ getAdminUsers: () => Promise<AdminUser[]>; createAdminUser: (userData: Partial<AdminUser>) => Promise<AdminUser>; updateAdminUser: (id: string, updates: Partial<...>) => Promise<...>; deleteAdminUser: (id: string) => Promise<...>; }'.
+src/pages/general/AnnouncementsPage.tsx(69,18): error TS2339: Property 'map' does not exist on type 'Promise<AcademicCourse[]>'.
+src/pages/general/AnnouncementsPage.tsx(70,36): error TS2339: Property 'getBatches' does not exist on type '{ getAcademicBatches: () => Promise<AcademicBatch[]>; getAcademicBatchById: (id: string) => Promise<AcademicBatch>; createAcademicBatch: (batchData: Partial<...>) => Promise<...>; updateAcademicBatch: (id: string, updates: Partial<...>) => Promise<...>; deleteAcademicBatch: (id: string) => Promise<...>; }'.
+src/pages/general/AnnouncementsPage.tsx(73,19): error TS2339: Property 'map' does not exist on type 'Promise<Teacher[]>'.
+src/pages/general/AnnouncementsPage.tsx(75,19): error TS2339: Property 'map' does not exist on type 'Promise<Student[]>'.
+src/pages/general/AnnouncementsPage.tsx(81,24): error TS2345: Argument of type 'Promise<Announcement[]>' is not assignable to parameter of type 'SetStateAction<Announcement[]>'.
+src/pages/general/AnnouncementsPage.tsx(153,7): error TS2353: Object literal may only specify known properties, and 'courseId' does not exist in type 'Partial<Announcement>'.
+src/pages/general/CalendarPage.tsx(31,57): error TS2345: Argument of type '() => Promise<CalendarEvent[]>' is not assignable to parameter of type 'CalendarEvent[] | (() => CalendarEvent[])'.
+src/pages/general/CalendarPage.tsx(111,15): error TS2345: Argument of type 'Promise<CalendarEvent[]>' is not assignable to parameter of type 'SetStateAction<CalendarEvent[]>'.
+src/pages/general/CalendarPage.tsx(113,33): error TS2339: Property 'title' does not exist on type 'Promise<CalendarEvent>'.
+src/pages/general/CalendarPage.tsx(493,29): error TS2345: Argument of type 'Promise<CalendarEvent[]>' is not assignable to parameter of type 'SetStateAction<CalendarEvent[]>'.
+src/pages/general/CentralNotificationsPage.tsx(78,28): error TS2339: Property 'getBatches' does not exist on type '{ getAcademicBatches: () => Promise<AcademicBatch[]>; getAcademicBatchById: (id: string) => Promise<AcademicBatch>; createAcademicBatch: (batchData: Partial<...>) => Promise<...>; updateAcademicBatch: (id: string, updates: Partial<...>) => Promise<...>; deleteAcademicBatch: (id: string) => Promise<...>; }'.
+src/pages/general/CentralNotificationsPage.tsx(109,46): error TS2367: This comparison appears to be unintentional because the types '"Teachers Only" | "Students Only" | "Specific Course" | "Specific Batch" | "Specific Section" | "Specific Teacher" | "Specific Student"' and '"Common Both Student + Teacher"' have no overlap.
+src/pages/general/CentralNotificationsPage.tsx(170,7): error TS2353: Object literal may only specify known properties, and 'courseId' does not exist in type 'Partial<CentralNotification>'.

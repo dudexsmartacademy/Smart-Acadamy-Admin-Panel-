@@ -119,10 +119,13 @@ export const deleteResult = async (id: string): Promise<boolean> => {
   return !error;
 };
 
+export const getResultsByStudent = getResultsByStudentId;
+
 export const resultService = {
   getResults,
   getResultById,
   getResultsByStudentId,
+  getResultsByStudent,
   createResult,
   deleteResult,
 };

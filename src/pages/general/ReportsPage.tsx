@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   FileSpreadsheet,
   Download,
@@ -62,126 +62,173 @@ export const ReportsPage: React.FC = () => {
     { id: 'activity', label: 'System Audit Logs', icon: Clock, desc: 'Administrative operations, security events, and database mutations.' },
   ];
 
-  // Retrieve data based on selected report
-  const reportData = useMemo(() => {
-    switch (selectedReport) {
-      case 'students':
-        return studentService.getStudents().map((s) => ({
-          'ID Code': s.studentId,
-          'Full Name': s.fullName,
-          Email: s.email,
-          Phone: s.phone,
-          'Department / Course': s.courseName || s.department,
-          Batch: s.batchName,
-          'Attendance %': `${s.attendancePercentage}%`,
-          'Average Score': `${s.averageScore}%`,
-          Status: s.status,
-          'Enrollment Date': s.enrollmentDate,
-        }));
-      case 'teachers':
-        return teacherService.getTeachers().map((t) => ({
-          'Teacher ID': t.id,
-          'Faculty Name': t.name,
-          Designation: t.designation,
-          Department: t.department,
-          Email: t.email,
-          Experience: t.experience,
-          Status: t.status,
-          Rating: `${t.rating} / 5.0`,
-        }));
-      case 'attendance':
-        return studentAttendanceService.getAttendanceRecords().map((a) => ({
-          'Record ID': a.id,
-          'Student Name': a.studentName,
-          Date: a.date,
-          Course: a.courseName,
-          Session: a.session,
-          Status: a.status.toUpperCase(),
-          'Recorded By': a.recordedBy || 'System Scanner',
-        }));
-      case 'exams':
-        return examService.getExams().map((e) => ({
-          'Exam Code': e.examCode,
-          Title: e.title,
-          Course: e.courseName,
-          'Date & Time': `${e.startDate} (${e.startTime})`,
-          Room: e.room,
-          'Total Marks': e.totalMarks,
-          'Passing Marks': e.passingMarks,
-          Mode: e.mode.toUpperCase(),
-          Status: e.status,
-        }));
-      case 'results':
-        return resultService.getResults().map((r) => ({
-          'Result Code': r.resultCode,
-          'Student ID': r.studentIdCode,
-          'Student Name': r.studentName,
-          Course: r.courseName,
-          'Marks Obtained': `${r.marksObtained} / ${r.maxMarks}`,
-          Percentage: `${r.percentage}%`,
-          Grade: r.grade,
-          Result: r.resultStatus.toUpperCase(),
-          'Evaluated By': r.evaluatorTeacherName,
-        }));
-      case 'fees':
-        return feeService.getFeeRecords().map((f) => ({
-          'Invoice #': f.invoiceNumber,
-          'Student ID': f.studentIdCode,
-          'Student Name': f.studentName,
-          Course: f.courseName,
-          'Fee Plan': f.feePlan,
-          'Total Due': `$${f.totalAmount}`,
-          'Paid Amount': `$${f.paidAmount}`,
-          'Remaining Balance': `$${f.remainingAmount}`,
-          'Due Date': f.dueDate,
-          Status: f.status.toUpperCase(),
-        }));
-      case 'payments':
-        return feeService.getPayments().map((p) => ({
-          'Receipt #': p.receiptNumber,
-          'Student Name': p.studentName,
-          'Amount Paid': `$${p.amount}`,
-          'Payment Date': new Date(p.paymentDate).toLocaleDateString(),
-          Method: p.paymentMethod,
-          Reference: p.transactionReference,
-          Collector: p.collectedBy,
-          Status: p.status.toUpperCase(),
-        }));
-      case 'courses':
-        return academicCourseService.getCourses().map((c) => ({
-          Code: c.code,
-          'Course Name': c.name,
-          Department: c.department,
-          Duration: `${c.durationMonths} Months`,
-          Credits: c.credits,
-          'Tuition Fee': `$${c.totalFee}`,
-          'Lead Faculty': c.leadTeacherName,
-          Status: c.status,
-        }));
-      case 'batches':
-        return academicBatchService.getBatches().map((b) => ({
-          Code: b.batchCode,
-          'Batch Name': b.name,
-          Course: b.courseName,
-          Department: b.department,
-          'Timeline Duration': `${b.startDate} to ${b.endDate}`,
-          Mentor: b.mentorTeacherName,
-          Enrollment: `${b.studentCount} / ${b.studentCapacity}`,
-          Status: b.status,
-        }));
-      case 'activity':
-        return activityService.getRecentLogs(50).map((l) => ({
-          Timestamp: l.timestamp,
-          Actor: l.actor,
-          Role: l.role,
-          Module: l.module,
-          Action: l.action,
-          Entity: l.entity,
-          Details: l.description,
-        }));
-      default:
-        return [];
-    }
+  const [reportData, setReportData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    const loadReport = async () => {
+      let data: any[] = [];
+      switch (selectedReport) {
+        case 'students': {
+          const res = await studentService.getStudents();
+          data = res.map((s) => ({
+            'ID Code': s.studentId,
+            'Full Name': s.fullName,
+            Email: s.email,
+            Phone: s.phone,
+            'Department / Course': s.courseName || s.department,
+            Batch: s.batchName,
+            'Attendance %': `${s.attendancePercentage}%`,
+            'Average Score': `${s.averageScore}%`,
+            Status: s.status,
+            'Enrollment Date': (s as any).enrollmentDate || (s as any).createdAt || '',
+          }));
+          break;
+        }
+        case 'teachers': {
+          const res = await teacherService.getTeachers();
+          data = res.map((t) => ({
+            'Teacher ID': t.id,
+            'Faculty Name': t.fullName || (t as any).name || '',
+            Designation: t.designation,
+            Department: t.department,
+            Email: t.email,
+            Experience: (t as any).experience || '5+ Years',
+            Status: t.status,
+            Rating: `${t.rating} / 5.0`,
+          }));
+          break;
+        }
+        case 'attendance': {
+          const res = await studentAttendanceService.getStudentAttendanceRecords();
+          data = res.map((a) => ({
+            'Record ID': a.id,
+            'Student Name': a.studentName,
+            Date: a.date,
+            Course: a.courseName,
+            Session: a.session,
+            Status: a.status.toUpperCase(),
+            'Recorded By': a.recordedBy || 'System Scanner',
+          }));
+          break;
+        }
+        case 'exams': {
+          const res = await examService.getExams();
+          data = res.map((e) => ({
+            'Exam Code': e.examCode,
+            Title: e.title,
+            Course: e.courseName,
+            'Date & Time': `${e.startDate} (${e.startTime})`,
+            Room: e.room,
+            'Total Marks': e.totalMarks,
+            'Passing Marks': e.passingMarks,
+            Mode: e.mode.toUpperCase(),
+            Status: e.status,
+          }));
+          break;
+        }
+        case 'results': {
+          const res = await resultService.getResults();
+          data = res.map((r) => ({
+            'Result Code': r.resultCode,
+            'Student ID': r.studentIdCode,
+            'Student Name': r.studentName,
+            Course: r.courseName,
+            'Marks Obtained': `${r.marksObtained} / ${r.maxMarks}`,
+            Percentage: `${r.percentage}%`,
+            Grade: r.grade,
+            Result: r.resultStatus.toUpperCase(),
+            'Evaluated By': r.evaluatorTeacherName,
+          }));
+          break;
+        }
+        case 'fees': {
+          const res = await feeService.getFeeRecords();
+          data = res.map((f) => ({
+            'Invoice #': f.invoiceNumber,
+            'Student ID': f.studentIdCode,
+            'Student Name': f.studentName,
+            Course: f.courseName,
+            'Fee Plan': f.feePlan,
+            'Total Due': `$${f.totalAmount}`,
+            'Paid Amount': `$${f.paidAmount}`,
+            'Remaining Balance': `$${f.remainingAmount}`,
+            'Due Date': f.dueDate,
+            Status: f.status.toUpperCase(),
+          }));
+          break;
+        }
+        case 'payments': {
+          const res = await feeService.getPayments();
+          data = res.map((p) => ({
+            'Receipt #': p.receiptNumber,
+            'Student Name': p.studentName,
+            'Amount Paid': `$${p.amount}`,
+            'Payment Date': new Date(p.paymentDate).toLocaleDateString(),
+            Method: p.paymentMethod,
+            Reference: p.transactionReference,
+            Collector: p.collectedBy,
+            Status: p.status.toUpperCase(),
+          }));
+          break;
+        }
+        case 'courses': {
+          const res = await academicCourseService.getCourses();
+          data = res.map((c) => ({
+            Code: c.code,
+            'Course Name': c.name,
+            Department: c.department,
+            Duration: `${c.durationMonths} Months`,
+            Credits: c.credits,
+            'Tuition Fee': `$${c.totalFee}`,
+            'Lead Faculty': c.leadTeacherName,
+            Status: c.status,
+          }));
+          break;
+        }
+        case 'batches': {
+          const res = await academicBatchService.getAcademicBatches();
+          data = res.map((b) => ({
+            Code: b.batchCode,
+            'Batch Name': b.name,
+            Course: b.courseName,
+            Department: b.department,
+            'Timeline Duration': `${b.startDate} to ${b.endDate}`,
+            Mentor: b.mentorTeacherName,
+            Enrollment: `${b.studentCount} / ${b.studentCapacity}`,
+            Status: b.status,
+          }));
+          break;
+        }
+        case 'activity': {
+          const res = await activityService.getLogs(50);
+          data = res.map((l) => ({
+            Timestamp: l.timestamp,
+            Actor: (l as any).actor || l.adminName || 'Admin',
+            Role: (l as any).role || 'Admin',
+            Module: l.module,
+            Action: l.action,
+            Entity: l.entity,
+            Details: l.description,
+          }));
+          break;
+        }
+      }
+
+      if (isMounted) {
+        setReportData(data);
+        setLoading(false);
+      }
+    };
+
+    loadReport();
+
+    return () => {
+      isMounted = false;
+    };
   }, [selectedReport]);
 
   const filteredData = useMemo(() => {

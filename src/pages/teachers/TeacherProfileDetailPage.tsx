@@ -29,13 +29,14 @@ export const TeacherProfileDetailPage: React.FC = () => {
   const [teacher, setTeacher] = useState<Teacher | null>(null);
 
   useEffect(() => {
-    if (!teacherId) return;
-
-    const foundTeacher = teacherService.getTeacherById(teacherId);
-
-    if (foundTeacher) {
-      setTeacher(foundTeacher);
-    }
+    const load = async () => {
+      if (!teacherId) return;
+      const foundTeacher = await teacherService.getTeacherById(teacherId);
+      if (foundTeacher) {
+        setTeacher(foundTeacher);
+      }
+    };
+    load();
   }, [teacherId]);
 
   const handlePhotoChange = (
@@ -47,10 +48,10 @@ export const TeacherProfileDetailPage: React.FC = () => {
 
     const reader = new FileReader();
 
-    reader.onload = () => {
+    reader.onload = async () => {
       const avatar = reader.result as string;
 
-      const updatedTeacher = teacherService.updateTeacher(teacher.id, {
+      const updatedTeacher = await teacherService.updateTeacher(teacher.id, {
         avatar,
       });
 

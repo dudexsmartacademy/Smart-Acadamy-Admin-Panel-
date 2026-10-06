@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GraduationCap,
   Eye,
@@ -17,11 +17,18 @@ import { PortalPreviewModal } from './PortalPreviewModal';
 
 export const StudentPortalControlPage: React.FC = () => {
   const { showToast } = useToast();
-  const [controls, setControls] = useState<PortalFeatureControl[]>(() =>
-    portalManagementService.getStudentPortalControls()
-  );
+  const [controls, setControls] = useState<PortalFeatureControl[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  const loadData = async () => {
+    const list = await portalManagementService.getStudentPortalControls();
+    setControls(list);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const categories = ['all', 'LEARNING', 'EVALUATION', 'ACADEMIC', 'COMMUNICATION', 'ACCOUNT'];
 
@@ -30,25 +37,25 @@ export const StudentPortalControlPage: React.FC = () => {
     return c.category === activeCategory;
   });
 
-  const handleToggle = (id: string, field: keyof PortalFeatureControl) => {
+  const handleToggle = async (id: string, field: keyof PortalFeatureControl) => {
     const item = controls.find((c) => c.id === id);
     if (!item) return;
 
     const newValue = !item[field];
-    const updated = portalManagementService.updateStudentPortalControl(id, {
+    const updated = await portalManagementService.updateStudentPortalControl(id, {
       [field]: newValue,
     });
 
     if (updated) {
-      setControls(portalManagementService.getStudentPortalControls());
+      await loadData();
       showToast(`Updated ${item.label} [${String(field)}: ${newValue ? 'ON' : 'OFF'}]`, 'success');
     }
   };
 
-  const handleResetDefaults = () => {
+  const handleResetDefaults = async () => {
     if (confirm('Reset Student Portal feature controls to default settings?')) {
-      const reset = portalManagementService.resetStudentPortalControls();
-      setControls(reset);
+      await portalManagementService.resetStudentPortalControls();
+      await loadData();
       showToast('Student Portal controls restored to system default', 'info');
     }
   };

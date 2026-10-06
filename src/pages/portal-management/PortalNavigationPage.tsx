@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Navigation,
   ArrowUpDown,
@@ -19,16 +19,22 @@ import { useToast } from '../../context/ToastContext';
 export const PortalNavigationPage: React.FC = () => {
   const { showToast } = useToast();
   const [activePortal, setActivePortal] = useState<'teacher' | 'student'>('teacher');
-  const [navItems, setNavItems] = useState<PortalNavigationItem[]>(() =>
-    portalManagementService.getPortalNavigation('teacher')
-  );
+  const [navItems, setNavItems] = useState<PortalNavigationItem[]>([]);
+
+  const loadNav = async (portal: 'teacher' | 'student') => {
+    const list = await portalManagementService.getPortalNavigation(portal);
+    setNavItems(list);
+  };
+
+  useEffect(() => {
+    loadNav(activePortal);
+  }, [activePortal]);
 
   const handleSwitchPortal = (portal: 'teacher' | 'student') => {
     setActivePortal(portal);
-    setNavItems(portalManagementService.getPortalNavigation(portal));
   };
 
-  const handleMoveUp = (index: number) => {
+  const handleMoveUp = async (index: number) => {
     if (index === 0) return;
     const items = [...navItems];
     const temp = items[index - 1];
@@ -38,11 +44,11 @@ export const PortalNavigationPage: React.FC = () => {
     // Update orders
     const reordered = items.map((item, idx) => ({ ...item, order: idx + 1 }));
     setNavItems(reordered);
-    portalManagementService.reorderPortalNavigation(activePortal, reordered);
+    await portalManagementService.reorderPortalNavigation(reordered);
     showToast('Navigation sequence updated', 'info');
   };
 
-  const handleMoveDown = (index: number) => {
+  const handleMoveDown = async (index: number) => {
     if (index === navItems.length - 1) return;
     const items = [...navItems];
     const temp = items[index + 1];
@@ -52,18 +58,18 @@ export const PortalNavigationPage: React.FC = () => {
     // Update orders
     const reordered = items.map((item, idx) => ({ ...item, order: idx + 1 }));
     setNavItems(reordered);
-    portalManagementService.reorderPortalNavigation(activePortal, reordered);
+    await portalManagementService.reorderPortalNavigation(reordered);
     showToast('Navigation sequence updated', 'info');
   };
 
-  const handleToggleVisibility = (id: string) => {
+  const handleToggleVisibility = async (id: string) => {
     const item = navItems.find((i) => i.id === id);
     if (!item) return;
-    const updated = portalManagementService.updatePortalNavigationItem(activePortal, id, {
+    const updated = await portalManagementService.updatePortalNavigation(id, {
       visible: !item.visible,
     });
     if (updated) {
-      setNavItems(portalManagementService.getPortalNavigation(activePortal));
+      await loadNav(activePortal);
       showToast(`Sidebar item [${item.label}] visibility toggled`, 'success');
     }
   };

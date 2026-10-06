@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Presentation,
@@ -15,13 +15,25 @@ import { Card } from '../../components/common/Card';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { getAcademicClasses } from '../../services/academicClassService';
 import { getStudents } from '../../services/studentService';
+import { AcademicClass, Student } from '../../types';
 
 export const StudentClassesPage: React.FC = () => {
   const navigate = useNavigate();
-  const classes = getAcademicClasses();
-  const students = getStudents();
-
+  const [classes, setClasses] = useState<AcademicClass[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const load = async () => {
+      const [cls, stus] = await Promise.all([
+        getAcademicClasses(),
+        getStudents(),
+      ]);
+      setClasses(cls);
+      setStudents(stus);
+    };
+    load();
+  }, []);
 
   // Flattened mapping of classes and enrolled students
   const classRows = classes.flatMap((cls) => {

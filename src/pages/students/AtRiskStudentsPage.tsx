@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -15,10 +15,19 @@ import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { getAtRiskStudents } from '../../services/studentService';
+import { Student } from '../../types';
 
 export const AtRiskStudentsPage: React.FC = () => {
   const navigate = useNavigate();
-  const atRiskList = getAtRiskStudents();
+  const [atRiskList, setAtRiskList] = useState<Student[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getAtRiskStudents();
+      setAtRiskList(data);
+    };
+    load();
+  }, []);
 
   return (
     <div className="space-y-6 pb-12">

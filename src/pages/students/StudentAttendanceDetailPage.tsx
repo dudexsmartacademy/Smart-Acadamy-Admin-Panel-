@@ -24,24 +24,25 @@ export const StudentAttendanceDetailPage: React.FC = () => {
   const { studentId } = useParams<{ studentId: string }>();
   const navigate = useNavigate();
 
-  const student = useMemo<Student | undefined>(() => {
-    if (!studentId) return undefined;
-    return (
-      studentService.getStudentById(studentId) ||
-      studentService.getStudents().find((s) => s.id === studentId || s.studentId === studentId)
-    );
-  }, [studentId]);
+  const [student, setStudent] = useState<Student | undefined>(undefined);
+  const [studentRecords, setStudentRecords] = useState<StudentAttendance[]>([]);
+  const [subjectWise, setSubjectWise] = useState<Array<{ subject: string; totalClasses: number; attendedClasses: number; percentage: number }>>([]);
 
-  // Attendance records for this student
-  const studentRecords = useMemo(() => {
-    if (!studentId) return [];
-    return getStudentAttendance(studentId);
-  }, [studentId]);
+  useEffect(() => {
+    const load = async () => {
+      if (!studentId) return;
+      const s =
+        (await studentService.getStudentById(studentId)) ||
+        (await studentService.getStudents()).find((item) => item.id === studentId || item.studentId === studentId);
+      setStudent(s);
 
-  // Subject Wise Breakdown
-  const subjectWise = useMemo(() => {
-    if (!studentId) return [];
-    return studentAttendanceService.getSubjectWiseAttendance(studentId);
+      const records = await getStudentAttendance(studentId);
+      setStudentRecords(records);
+
+      const subWise = await studentAttendanceService.getSubjectWiseAttendance(studentId);
+      setSubjectWise(subWise);
+    };
+    load();
   }, [studentId]);
 
   // Available subjects for dropdown
@@ -52,149 +53,50 @@ export const StudentAttendanceDetailPage: React.FC = () => {
         list.push(s.subject);
       }
     });
-    // Ensure standard subjects if empty
-    ['Python', 'Data Science', 'DBMS', 'Mathematics'].forEach((s) => {
-      if (!list.includes(s)) {
-        list.push(s);
+    studentRecords.forEach((r) => {
+      const sub = r.subjectName || r.subject;
+      if (sub && !list.includes(sub)) {
+        list.push(sub);
       }
     });
     return list;
-  }, [subjectWise]);
+  }, [subjectWise, studentRecords]);
 
   // Selected subject in the Attendance Tracker
   const [selectedSubject, setSelectedSubject] = useState<string>('Select a subject');
   const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false);
 
-  // Overall attendance metrics calculation
-  const overallConducted = 50; // based on institutional aggregate sessions
-  const overallAttended = 41;  // present sessions
-  const overallAbsences = '09'; // absences / late
-  const overallRate = 82;      // 82%
+  // Overall attendance metrics calculation from live records
+  const overallConducted = useMemo(() => {
+    return studentRecords.length > 0 ? studentRecords.length : subjectWise.reduce((acc, curr) => acc + curr.totalClasses, 0);
+  }, [studentRecords, subjectWise]);
+
+  const overallAttended = useMemo(() => {
+    if (studentRecords.length > 0) {
+      return studentRecords.filter(r => r.status === 'Present' || r.status === 'present').length;
+    }
+    return subjectWise.reduce((acc, curr) => acc + curr.attendedClasses, 0);
+  }, [studentRecords, subjectWise]);
+
+  const overallAbsences = useMemo(() => {
+    const abs = overallConducted - overallAttended;
+    return abs < 10 ? `0${abs}` : `${abs}`;
+  }, [overallConducted, overallAttended]);
+
+  const overallRate = useMemo(() => {
+    if (overallConducted === 0) return 100;
+    return Math.round((overallAttended / overallConducted) * 100);
+  }, [overallConducted, overallAttended]);
 
   // Filtered session records for the selected subject
   const subjectSessionRecords = useMemo(() => {
     if (selectedSubject === 'Select a subject') return [];
 
-    const matches = studentRecords.filter(
+    return studentRecords.filter(
       (r) =>
         (r.subjectName && r.subjectName.toLowerCase() === selectedSubject.toLowerCase()) ||
         (r.subject && r.subject.toLowerCase() === selectedSubject.toLowerCase())
     );
-
-    if (matches.length > 0) {
-      return matches;
-    }
-
-    // Default mock session entries if no custom entries exist yet
-    if (selectedSubject === 'Data Science') {
-      return [
-        {
-          id: 'sess-ds-01',
-          date: '07 Sep 2026',
-          subject: 'Data Science',
-          faculty: 'Prof. Priya Sharma',
-          mode: 'Online',
-          status: 'Present',
-        },
-        {
-          id: 'sess-ds-02',
-          date: '01 Sep 2026',
-          subject: 'Data Science',
-          faculty: 'Prof. Priya Sharma',
-          mode: 'Offline',
-          status: 'Present',
-        },
-        {
-          id: 'sess-ds-03',
-          date: '28 Aug 2026',
-          subject: 'Data Science',
-          faculty: 'Prof. Priya Sharma',
-          mode: 'Offline',
-          status: 'Present',
-        },
-        {
-          id: 'sess-ds-04',
-          date: '24 Aug 2026',
-          subject: 'Data Science',
-          faculty: 'Prof. Priya Sharma',
-          mode: 'Online',
-          status: 'Absent',
-        },
-      ];
-    }
-
-    if (selectedSubject === 'Python') {
-      return [
-        {
-          id: 'sess-py-01',
-          date: '08 Sep 2026',
-          subject: 'Python',
-          faculty: 'Dr. Marcus Holloway',
-          mode: 'Offline',
-          status: 'Present',
-        },
-        {
-          id: 'sess-py-02',
-          date: '05 Sep 2026',
-          subject: 'Python',
-          faculty: 'Dr. Marcus Holloway',
-          mode: 'Online',
-          status: 'Present',
-        },
-        {
-          id: 'sess-py-03',
-          date: '30 Aug 2026',
-          subject: 'Python',
-          faculty: 'Dr. Marcus Holloway',
-          mode: 'Offline',
-          status: 'Present',
-        },
-      ];
-    }
-
-    if (selectedSubject === 'DBMS') {
-      return [
-        {
-          id: 'sess-db-01',
-          date: '06 Sep 2026',
-          subject: 'DBMS',
-          faculty: 'Dr. Tariq Al-Mansoor',
-          mode: 'Offline',
-          status: 'Present',
-        },
-        {
-          id: 'sess-db-02',
-          date: '02 Sep 2026',
-          subject: 'DBMS',
-          faculty: 'Dr. Tariq Al-Mansoor',
-          mode: 'Offline',
-          status: 'Present',
-        },
-      ];
-    }
-
-    if (selectedSubject === 'Mathematics') {
-      return [
-        {
-          id: 'sess-math-01',
-          date: '04 Sep 2026',
-          subject: 'Mathematics',
-          faculty: 'Prof. Elena Rostova',
-          mode: 'Offline',
-          status: 'Present',
-        },
-        {
-          id: 'sess-math-02',
-          date: '30 Aug 2026',
-          subject: 'Mathematics',
-          faculty: 'Prof. Elena Rostova',
-          mode: 'Online',
-          status: 'Absent',
-        },
-      ];
-    }
-
-    return [];
   }, [selectedSubject, studentRecords]);
 
   // Format date helper

@@ -79,8 +79,20 @@ export const revokeCertificate = async (id: string): Promise<boolean> => {
   return !error;
 };
 
+export const updateCertificateStatus = async (id: string, status: StudentCertificate['status']): Promise<boolean> => {
+  const { error } = await supabase
+    .from('certificates')
+    .update({ status })
+    .eq('id', id);
+  return !error;
+};
+
+export const getStudentCertificates = getCertificates;
+
 export const certificateService = {
   getCertificates,
+  getStudentCertificates,
   issueCertificate,
   revokeCertificate,
+  updateCertificateStatus,
 };

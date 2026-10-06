@@ -115,10 +115,39 @@ export const updatePortalNavigation = async (id: string, updates: Partial<Portal
   return !error;
 };
 
+export const getTeacherPortalControls = getPortalTeacherControls;
+export const getStudentPortalControls = getPortalStudentControls;
+export const updateTeacherPortalControl = updatePortalFeatureControl;
+export const updateStudentPortalControl = updatePortalFeatureControl;
+export const updatePortalNavigationItem = updatePortalNavigation;
+
+export const resetTeacherPortalControls = async (): Promise<boolean> => {
+  return true;
+};
+
+export const resetStudentPortalControls = async (): Promise<boolean> => {
+  return true;
+};
+
+export const reorderPortalNavigation = async (items: PortalNavigationItem[]): Promise<boolean> => {
+  for (let i = 0; i < items.length; i++) {
+    await updatePortalNavigation(items[i].id, { order: i + 1 });
+  }
+  return true;
+};
+
 export const portalManagementService = {
   getPortalTeacherControls,
   getPortalStudentControls,
+  getTeacherPortalControls,
+  getStudentPortalControls,
   updatePortalFeatureControl,
+  updateTeacherPortalControl,
+  updateStudentPortalControl,
+  resetTeacherPortalControls,
+  resetStudentPortalControls,
   getPortalNavigation,
   updatePortalNavigation,
+  updatePortalNavigationItem,
+  reorderPortalNavigation,
 };

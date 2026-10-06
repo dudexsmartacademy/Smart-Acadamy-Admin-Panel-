@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   HardDrive,
   Upload,
@@ -21,7 +21,7 @@ import { useToast } from '../../context/ToastContext';
 
 export const StorageFilesPage: React.FC = () => {
   const { showToast } = useToast();
-  const [files, setFiles] = useState<StorageFile[]>(() => storageFileService.getStorageFiles());
+  const [files, setFiles] = useState<StorageFile[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -36,9 +36,14 @@ export const StorageFilesPage: React.FC = () => {
     status: 'Active' as StorageFile['status'],
   });
 
-  const loadData = () => {
-    setFiles(storageFileService.getStorageFiles());
+  const loadData = async () => {
+    const list = await storageFileService.getStorageFiles();
+    setFiles(list);
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const filteredFiles = useMemo(() => {
     return files.filter((f) => {
@@ -57,14 +62,14 @@ export const StorageFilesPage: React.FC = () => {
     return { totalFiles, totalStorageMb };
   }, [files]);
 
-  const handleUpload = (e: React.FormEvent) => {
+  const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) {
       showToast('File name is required', 'error');
       return;
     }
 
-    storageFileService.createStorageFile({
+    await storageFileService.createStorageFile({
       name: formData.name.endsWith('.pdf') || formData.name.includes('.') ? formData.name : `${formData.name}.pdf`,
       fileType: formData.fileType,
       sizeBytes: 3400000,
@@ -76,7 +81,7 @@ export const StorageFilesPage: React.FC = () => {
     });
 
     setIsUploadOpen(false);
-    loadData();
+    await loadData();
     showToast('Asset uploaded to cloud storage repository', 'success');
   };
 
@@ -84,10 +89,10 @@ export const StorageFilesPage: React.FC = () => {
     showToast(`Downloading mock asset: ${name}`, 'info');
   };
 
-  const handleDelete = (id: string, name: string) => {
+  const handleDelete = async (id: string, name: string) => {
     if (confirm(`Delete cloud file "${name}"?`)) {
-      storageFileService.deleteStorageFile(id);
-      loadData();
+      await storageFileService.deleteStorageFile(id);
+      await loadData();
       showToast(`Asset "${name}" removed`, 'info');
     }
   };

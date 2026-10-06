@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Layers,
@@ -19,10 +19,20 @@ import { useToast } from '../../context/ToastContext';
 export const ContentManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const [sections, setSections] = useState<ContentSection[]>(() =>
-    contentService.getContentSections()
-  );
+  const [sections, setSections] = useState<ContentSection[]>([]);
   const [activeKey, setActiveKey] = useState<string>('homepage_hero');
+  const [loading, setLoading] = useState(true);
+
+  const loadData = async () => {
+    setLoading(true);
+    const secs = await contentService.getContentSections();
+    setSections(secs);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const currentSection = sections.find((s) => s.sectionKey === activeKey) || sections[0];
 
@@ -31,6 +41,16 @@ export const ContentManagementPage: React.FC = () => {
     subtitle: currentSection?.subtitle || '',
     content: currentSection?.content || '',
   });
+
+  useEffect(() => {
+    if (currentSection) {
+      setFormData({
+        title: currentSection.title,
+        subtitle: currentSection.subtitle || '',
+        content: currentSection.content,
+      });
+    }
+  }, [currentSection?.id, currentSection?.sectionKey]);
 
   const handleSelectSection = (key: string) => {
     setActiveKey(key);
@@ -44,19 +64,19 @@ export const ContentManagementPage: React.FC = () => {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentSection) return;
 
-    const updated = contentService.updateContentSection(currentSection.sectionKey, {
+    const ok = await contentService.updateContentSection(currentSection.id || currentSection.sectionKey, {
       title: formData.title,
       subtitle: formData.subtitle,
       content: formData.content,
     });
 
-    if (updated) {
-      setSections(contentService.getContentSections());
-      showToast(`Content for [${updated.title}] updated successfully`, 'success');
+    if (ok) {
+      await loadData();
+      showToast(`Content for [${formData.title}] updated successfully`, 'success');
     }
   };
 

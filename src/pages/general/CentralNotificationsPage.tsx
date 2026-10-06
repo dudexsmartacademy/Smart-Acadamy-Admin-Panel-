@@ -68,22 +68,23 @@ export const CentralNotificationsPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    const c = academicCourseService.getCourses();
-    setCourses(c.map((x) => ({ id: x.id, name: x.name })));
-    const b = academicBatchService.getBatches();
-    setBatches(b.map((x) => ({ id: x.id, name: x.name })));
-    const t = teacherService.getTeachers();
-    setTeachers(t.map((x) => ({ id: x.id, name: x.name })));
-    const s = studentService.getStudents();
-    setStudents(s.map((x) => ({ id: x.id, name: x.fullName })));
   }, []);
 
-  const loadData = () => {
+  const loadData = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setNotifications(centralNotificationService.getCentralNotifications());
-      setLoading(false);
-    }, 150);
+    const [notifs, c, b, t, s] = await Promise.all([
+      centralNotificationService.getCentralNotifications(),
+      academicCourseService.getCourses(),
+      academicBatchService.getAcademicBatches(),
+      teacherService.getTeachers(),
+      studentService.getStudents(),
+    ]);
+    setNotifications(notifs);
+    setCourses(c.map((x) => ({ id: x.id, name: x.name })));
+    setBatches(b.map((x) => ({ id: x.id, name: x.name })));
+    setTeachers(t.map((x) => ({ id: x.id, name: x.fullName })));
+    setStudents(s.map((x) => ({ id: x.id, name: x.fullName })));
+    setLoading(false);
   };
 
   const filteredNotifications = useMemo(() => {
@@ -99,8 +100,8 @@ export const CentralNotificationsPage: React.FC = () => {
 
   const stats = useMemo(() => {
     const total = notifications.length;
-    const totalRecipients = notifications.reduce((sum, n) => sum + n.recipientsCount, 0);
-    const unread = notifications.reduce((sum, n) => sum + n.unreadCount, 0);
+    const totalRecipients = notifications.reduce((sum, n) => sum + (n.recipientsCount || 0), 0);
+    const unread = notifications.reduce((sum, n) => sum + (n.unreadCount || 0), 0);
     return { total, totalRecipients, unread };
   }, [notifications]);
 
@@ -147,7 +148,7 @@ export const CentralNotificationsPage: React.FC = () => {
     setPreviewModalOpen(true);
   };
 
-  const handleSendNotification = (actionStatus: 'Sent' | 'Scheduled' | 'Draft') => {
+  const handleSendNotification = async (actionStatus: 'Sent' | 'Scheduled' | 'Draft') => {
     let finalCourseName = formData.courseName;
     if (formData.courseId && !finalCourseName) {
       const found = courses.find((c) => c.id === formData.courseId);
@@ -160,7 +161,7 @@ export const CentralNotificationsPage: React.FC = () => {
       if (found) finalBatchName = found.name;
     }
 
-    centralNotificationService.sendCentralNotification({
+    await centralNotificationService.sendCentralNotification({
       title: formData.title,
       message: formData.message,
       type: formData.type,
@@ -180,7 +181,7 @@ export const CentralNotificationsPage: React.FC = () => {
 
     setPreviewModalOpen(false);
     setIsComposerOpen(false);
-    loadData();
+    await loadData();
     showToast(
       actionStatus === 'Scheduled'
         ? 'Notification scheduled for transmission'
@@ -191,33 +192,33 @@ export const CentralNotificationsPage: React.FC = () => {
     );
   };
 
-  const handleToggleRead = (notif: CentralNotification) => {
+  const handleToggleRead = async (notif: CentralNotification) => {
     if (notif.read) {
-      centralNotificationService.markNotificationAsUnread(notif.id);
+      await centralNotificationService.markNotificationAsUnread(notif.id);
       showToast('Marked as unread', 'info');
     } else {
-      centralNotificationService.markNotificationAsRead(notif.id);
+      await centralNotificationService.markNotificationAsRead(notif.id);
       showToast('Marked as read', 'success');
     }
-    loadData();
+    await loadData();
   };
 
-  const handleMarkAllRead = () => {
-    centralNotificationService.markAllNotificationsAsRead();
-    loadData();
+  const handleMarkAllRead = async () => {
+    await centralNotificationService.markAllNotificationsAsRead();
+    await loadData();
     showToast('All notifications marked as read', 'success');
   };
 
-  const handleDuplicate = (id: string) => {
-    centralNotificationService.duplicateCentralNotification(id);
-    loadData();
+  const handleDuplicate = async (id: string) => {
+    await centralNotificationService.duplicateCentralNotification(id);
+    await loadData();
     showToast('Notification duplicated to draft', 'info');
   };
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string) => {
     if (confirm(`Delete notification "${title}"?`)) {
-      centralNotificationService.deleteCentralNotification(id);
-      loadData();
+      await centralNotificationService.deleteCentralNotification(id);
+      await loadData();
       showToast('Notification deleted', 'info');
       if (selectedNotif?.id === id) setSelectedNotif(null);
     }
@@ -229,7 +230,7 @@ export const CentralNotificationsPage: React.FC = () => {
         return <AlertTriangle className="w-4 h-4 text-amber-400" />;
       case 'success':
         return <CheckCircle className="w-4 h-4 text-emerald-400" />;
-      case 'error':
+      case 'alert':
         return <AlertTriangle className="w-4 h-4 text-rose-400" />;
       default:
         return <Info className="w-4 h-4 text-blue-400" />;

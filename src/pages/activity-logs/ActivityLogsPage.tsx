@@ -36,8 +36,9 @@ export const ActivityLogsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
-  const loadData = () => {
-    setLogs(activityService.getLogs());
+  const loadData = async () => {
+    const l = await activityService.getLogs();
+    setLogs(l);
   };
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export const ActivityLogsPage: React.FC = () => {
         log.action.toLowerCase().includes(q) ||
         log.entity.toLowerCase().includes(q) ||
         log.description.toLowerCase().includes(q) ||
-        log.adminName.toLowerCase().includes(q);
+        (log.adminName && log.adminName.toLowerCase().includes(q));
 
       const matchesModule = !moduleFilter || log.module === moduleFilter;
 
@@ -65,11 +66,11 @@ export const ActivityLogsPage: React.FC = () => {
     return filteredLogs.slice(start, start + pageSize);
   }, [filteredLogs, currentPage, pageSize]);
 
-  const handleClearLogs = () => {
-    activityService.clearLogs();
+  const handleClearLogs = async () => {
+    await activityService.clearLogs();
     success('Audit Trail Cleared', 'Activity logs have been reset.');
     setIsClearConfirmOpen(false);
-    loadData();
+    await loadData();
   };
 
   return (

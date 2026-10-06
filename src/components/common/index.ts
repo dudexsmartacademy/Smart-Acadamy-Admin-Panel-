@@ -22,6 +22,5 @@ export * from './EmptyState';
 export * from './ErrorState';
 export * from './ConfirmDialog';
 export * from './PageHeader';
-export * from './SectionHeader';
 export * from './ChartCard';
 export * from './Timeline';

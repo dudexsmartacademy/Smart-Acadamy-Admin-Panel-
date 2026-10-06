@@ -121,10 +121,36 @@ export const deleteAdmission = async (id: string): Promise<boolean> => {
   return !error;
 };
 
+export const convertAdmissionToStudent = async (id: string): Promise<{ success: boolean; student?: any }> => {
+  const admission = await getAdmissionById(id);
+  if (!admission) return { success: false };
+
+  const { data: student, error } = await supabase
+    .from('students')
+    .insert({
+      full_name: admission.fullName || admission.applicantName,
+      email: admission.email,
+      phone: admission.phone,
+      department: admission.department,
+      course_id: admission.courseId || null,
+      course: admission.courseName || '',
+      batch_id: admission.batchId || null,
+      batch: admission.batchName || '',
+      status: 'Active',
+    })
+    .select()
+    .single();
+
+  if (error || !student) return { success: false };
+  await updateAdmissionStatus(id, 'approved', 'Converted to Active Student');
+  return { success: true, student };
+};
+
 export const admissionService = {
   getAdmissions,
   getAdmissionById,
   createAdmission,
   updateAdmissionStatus,
   deleteAdmission,
+  convertAdmissionToStudent,
 };

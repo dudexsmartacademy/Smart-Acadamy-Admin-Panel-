@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar as CalendarIcon,
@@ -16,10 +16,20 @@ import { Card } from '../../components/common/Card';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { getAcademicClasses } from '../../services/academicClassService';
 
+import { AcademicClass } from '../../types';
+
 export const StudentSchedulePage: React.FC = () => {
   const navigate = useNavigate();
-  const classes = getAcademicClasses();
+  const [classes, setClasses] = useState<AcademicClass[]>([]);
   const [viewMode, setViewMode] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getAcademicClasses();
+      setClasses(data);
+    };
+    load();
+  }, []);
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 

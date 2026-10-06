@@ -55,13 +55,11 @@ export const ClassroomsPage: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
+  const loadData = async () => {
     setLoading(true);
-    setTimeout(() => {
-      const data = classroomService.getClassrooms();
-      setClassrooms(data);
-      setLoading(false);
-    }, 150);
+    const data = await classroomService.getClassrooms();
+    setClassrooms(data);
+    setLoading(false);
   };
 
   const buildings = useMemo(() => {
@@ -120,7 +118,7 @@ export const ClassroomsPage: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleSaveForm = (e: React.FormEvent) => {
+  const handleSaveForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.roomNumber.trim()) {
       showToast('Please provide room name and number', 'error');
@@ -133,7 +131,7 @@ export const ClassroomsPage: React.FC = () => {
       .filter(Boolean);
 
     if (editingRoom) {
-      classroomService.updateClassroom(editingRoom.id, {
+      await classroomService.updateClassroom(editingRoom.id, {
         name: formData.name,
         roomNumber: formData.roomNumber,
         building: formData.building,
@@ -145,7 +143,7 @@ export const ClassroomsPage: React.FC = () => {
       });
       showToast('Classroom updated successfully', 'success');
     } else {
-      classroomService.createClassroom({
+      await classroomService.createClassroom({
         name: formData.name,
         roomNumber: formData.roomNumber,
         building: formData.building,
@@ -159,14 +157,14 @@ export const ClassroomsPage: React.FC = () => {
     }
 
     setIsFormOpen(false);
-    loadData();
+    await loadData();
   };
 
-  const handleDelete = (id: string, name: string) => {
+  const handleDelete = async (id: string, name: string) => {
     if (confirm(`Are you sure you want to delete classroom "${name}"?`)) {
-      classroomService.deleteClassroom(id);
+      await classroomService.deleteClassroom(id);
       showToast(`Classroom "${name}" deleted`, 'success');
-      loadData();
+      await loadData();
       if (selectedRoom?.id === id) {
         setIsDetailOpen(false);
       }

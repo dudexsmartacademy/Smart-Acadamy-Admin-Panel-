@@ -22,26 +22,29 @@ import { Student } from '../../types';
 export const StudentProfilesPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Batches
-  const allBatches = useMemo(() => {
-    const list = getAcademicBatches();
-    const batchNames = ['All Batches', 'Batch 1', 'Batch 2', 'Batch 3'];
-    list.forEach((b) => {
-      if (!batchNames.includes(b.name)) {
-        batchNames.push(b.name);
-      }
-    });
-    return batchNames;
-  }, []);
-
+  const [students, setStudents] = useState<Student[]>([]);
+  const [allBatches, setAllBatches] = useState<string[]>(['All Batches']);
   const [selectedBatch, setSelectedBatch] = useState<string>('All Batches');
   const [isBatchDropdownOpen, setIsBatchDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [students, setStudents] = useState<Student[]>([]);
-
   useEffect(() => {
-    setStudents(getStudents());
+    const load = async () => {
+      const [stus, bts] = await Promise.all([
+        getStudents(),
+        getAcademicBatches(),
+      ]);
+      setStudents(stus);
+
+      const batchNames = ['All Batches'];
+      bts.forEach((b) => {
+        if (b.name && !batchNames.includes(b.name)) {
+          batchNames.push(b.name);
+        }
+      });
+      setAllBatches(batchNames);
+    };
+    load();
   }, []);
 
   // Filtered students
@@ -51,17 +54,7 @@ export const StudentProfilesPage: React.FC = () => {
       if (selectedBatch !== 'All Batches') {
         const matchesBatch =
           s.batch === selectedBatch ||
-          s.batchName === selectedBatch ||
-          (selectedBatch === 'Batch 1' &&
-            [
-              'stu-naveen-01',
-              'stu-107',
-              'stu-108',
-              'stu-109',
-              'stu-110',
-              'stu-111',
-              'stu-112',
-            ].includes(s.id));
+          s.batchName === selectedBatch;
         if (!matchesBatch) return false;
       }
 

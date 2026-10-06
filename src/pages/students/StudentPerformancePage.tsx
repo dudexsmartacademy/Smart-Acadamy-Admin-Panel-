@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Activity,
@@ -30,9 +30,23 @@ import {
 
 export const StudentPerformancePage: React.FC = () => {
   const navigate = useNavigate();
-  const students = getStudents();
-  const results = getResults();
-  const atRisk = getAtRiskStudents();
+  const [students, setStudents] = useState<any[]>([]);
+  const [results, setResults] = useState<any[]>([]);
+  const [atRisk, setAtRisk] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      getStudents(),
+      getResults(),
+      getAtRiskStudents(),
+    ]).then(([stus, res, risk]) => {
+      setStudents(stus);
+      setResults(res);
+      setAtRisk(risk);
+      setLoading(false);
+    });
+  }, []);
 
   // Performance trends data
   const performanceTrend = [
@@ -80,33 +94,29 @@ export const StudentPerformancePage: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatCard
-          title="Overall Exam Average"
+          label="Overall Exam Average"
           value={`${overallAvgExam}%`}
           icon={<Award className="w-5 h-5 text-amber-400" />}
-          change="+3.2% vs last term"
-          changeType="positive"
+          secondaryInfo="+3.2% vs last term"
         />
         <StatCard
-          title="Average Attendance"
+          label="Average Attendance"
           value={`${overallAvgAtt}%`}
           icon={<CalendarCheck className="w-5 h-5 text-emerald-400" />}
-          change="Safe threshold (>75%)"
-          changeType="positive"
+          secondaryInfo="Safe threshold (>75%)"
         />
         <StatCard
-          title="Assignment Submissions"
+          label="Assignment Submissions"
           value="94.6%"
           icon={<FileText className="w-5 h-5 text-blue-400" />}
-          change="1,240 completed"
-          changeType="positive"
+          secondaryInfo="1,240 completed"
         />
         <StatCard
-          title="At-Risk Students"
+          label="At-Risk Students"
           value={atRisk.length.toString()}
           icon={<AlertTriangle className="w-5 h-5 text-rose-400" />}
-          change="Requires intervention"
-          changeType="negative"
-          onClick={() => navigate('/admin/students/at-risk')}
+          secondaryInfo="Requires intervention"
+          to="/admin/students/at-risk"
         />
       </div>
 

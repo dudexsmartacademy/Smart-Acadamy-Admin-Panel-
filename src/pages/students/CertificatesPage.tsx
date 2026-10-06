@@ -25,27 +25,36 @@ import {
 } from '../../services/certificateService';
 import { getStudents } from '../../services/studentService';
 import { getAcademicCourses } from '../../services/academicCourseService';
-import { StudentCertificate } from '../../types';
+import { AcademicCourse, Student, StudentCertificate } from '../../types';
 
 export const CertificatesPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
   const [certificates, setCertificates] = useState<StudentCertificate[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [courses, setCourses] = useState<AcademicCourse[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [previewCert, setPreviewCert] = useState<StudentCertificate | null>(null);
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
 
-  const students = getStudents();
-  const courses = getAcademicCourses();
-
   const [formData, setFormData] = useState({
-    studentId: students[0]?.id || '',
-    courseName: courses[0]?.name || 'Full-Stack Web Development',
+    studentId: '',
+    courseName: 'Full-Stack Web Development',
   });
 
-  const loadData = () => {
-    setCertificates(getCertificates());
+  const loadData = async () => {
+    const [certs, stus, crs] = await Promise.all([
+      getCertificates(),
+      getStudents(),
+      getAcademicCourses(),
+    ]);
+    setCertificates(certs);
+    setStudents(stus);
+    setCourses(crs);
+    if (stus.length > 0 && !formData.studentId) {
+      setFormData((prev) => ({ ...prev, studentId: stus[0].id }));
+    }
   };
 
   useEffect(() => {
@@ -64,12 +73,12 @@ export const CertificatesPage: React.FC = () => {
     return true;
   });
 
-  const handleIssue = (e: React.FormEvent) => {
+  const handleIssue = async (e: React.FormEvent) => {
     e.preventDefault();
     const selStudent = students.find((s) => s.id === formData.studentId);
     if (!selStudent) return;
 
-    const issued = issueCertificate({
+    const issued = await issueCertificate({
       studentId: selStudent.id,
       studentName: selStudent.fullName,
       courseName: formData.courseName,
@@ -79,14 +88,14 @@ export const CertificatesPage: React.FC = () => {
 
     showToast(`Issued certificate for ${selStudent.fullName}!`, 'success');
     setIsIssueModalOpen(false);
-    loadData();
-    setPreviewCert(issued);
+    await loadData();
+    if (issued) setPreviewCert(issued);
   };
 
-  const handleStatusToggle = (cert: StudentCertificate) => {
+  const handleStatusToggle = async (cert: StudentCertificate) => {
     const nextStatus = cert.status === 'Issued' ? 'Revoked' : 'Issued';
-    updateCertificateStatus(cert.id, nextStatus);
-    loadData();
+    await updateCertificateStatus(cert.id, nextStatus);
+    await loadData();
     showToast(`Certificate status updated to ${nextStatus}`, 'success');
   };
 

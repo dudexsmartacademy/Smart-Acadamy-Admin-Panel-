@@ -101,4 +101,38 @@ export const teacherApplicationService = {
     const { error } = await supabase.from('teacher_applications').delete().eq('id', id);
     return !error;
   },
+
+  async convertToTeacher(id: string): Promise<boolean> {
+    const app = await this.getById(id);
+    if (!app) return false;
+    const { data: teacher, error } = await supabase
+      .from('teachers')
+      .insert({
+        full_name: app.fullName,
+        email: app.email,
+        phone: app.phone,
+        department: app.department,
+        qualification: app.qualification,
+        experience_years: app.experienceYears,
+        status: 'Active',
+      })
+      .select()
+      .single();
+
+    if (error || !teacher) return false;
+    await this.updateStatus(id, 'approved', 'Converted to Active Faculty');
+    return true;
+  },
+
+  getApplications() {
+    return this.getAll();
+  },
+
+  updateApplicationStatus(id: string, status: ApplicationStatus, notes?: string) {
+    return this.updateStatus(id, status, notes);
+  },
+
+  deleteApplication(id: string) {
+    return this.delete(id);
+  },
 };

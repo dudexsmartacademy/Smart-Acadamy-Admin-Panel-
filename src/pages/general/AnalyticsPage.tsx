@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   TrendingUp,
   Users,
@@ -52,12 +52,32 @@ export const AnalyticsPage: React.FC = () => {
     'institution' | 'students' | 'teachers' | 'courses' | 'attendance' | 'exams' | 'fees'
   >('institution');
 
-  const students = studentService.getStudents();
-  const teachers = teacherService.getTeachers();
-  const courses = academicCourseService.getCourses();
-  const exams = examService.getExams();
-  const feeRecords = feeService.getFeeRecords();
-  const payments = feeService.getPayments();
+  const [students, setStudents] = useState<any[]>([]);
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [exams, setExams] = useState<any[]>([]);
+  const [feeRecords, setFeeRecords] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      studentService.getStudents(),
+      teacherService.getTeachers(),
+      academicCourseService.getCourses(),
+      examService.getExams(),
+      feeService.getFeeRecords(),
+      feeService.getPayments(),
+    ]).then(([stus, tchs, crs, exms, fees, pays]) => {
+      setStudents(stus);
+      setTeachers(tchs);
+      setCourses(crs);
+      setExams(exms);
+      setFeeRecords(fees);
+      setPayments(pays);
+      setLoading(false);
+    });
+  }, []);
 
   // Summary Metrics
   const totalCollectedFees = payments.reduce((acc, p) => acc + p.amount, 0);

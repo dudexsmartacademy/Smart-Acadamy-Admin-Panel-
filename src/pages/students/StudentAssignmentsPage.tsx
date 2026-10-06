@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -21,6 +21,8 @@ import { getStudents } from '../../services/studentService';
 import { getAcademicCourses } from '../../services/academicCourseService';
 import { getAcademicBatches } from '../../services/academicBatchService';
 
+import { AcademicBatch, AcademicCourse, Student } from '../../types';
+
 export interface AssignmentItem {
   id: string;
   title: string;
@@ -40,9 +42,30 @@ export interface AssignmentItem {
 export const StudentAssignmentsPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const students = getStudents();
-  const courses = getAcademicCourses();
-  const batches = getAcademicBatches();
+  const [students, setStudents] = useState<Student[]>([]);
+  const [courses, setCourses] = useState<AcademicCourse[]>([]);
+  const [batches, setBatches] = useState<AcademicBatch[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const [stus, crs, bts] = await Promise.all([
+        getStudents(),
+        getAcademicCourses(),
+        getAcademicBatches(),
+      ]);
+      setStudents(stus);
+      setCourses(crs);
+      setBatches(bts);
+      if (crs.length > 0 && bts.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          courseName: crs[0].name,
+          batchName: bts[0].name,
+        }));
+      }
+    };
+    load();
+  }, []);
 
   const [assignments, setAssignments] = useState<AssignmentItem[]>([
     {
@@ -99,9 +122,9 @@ export const StudentAssignmentsPage: React.FC = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    courseName: courses[0]?.name || 'Full-Stack Web Development',
+    courseName: 'Full-Stack Web Development',
     teacherName: 'Dr. Sarah Jenkins',
-    batchName: batches[0]?.name || 'Batch 2026-Alpha',
+    batchName: 'Batch 2026-Alpha',
     assignedDate: new Date().toISOString().split('T')[0],
     dueDate: '2026-10-15',
     status: 'Published' as AssignmentItem['status'],

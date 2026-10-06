@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar as CalendarIcon,
@@ -28,12 +28,21 @@ type CalendarViewMode = 'month' | 'week' | 'day' | 'agenda';
 export const CalendarPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const [events, setEvents] = useState<CalendarEvent[]>(() => calendarService.getCalendarEvents());
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [viewMode, setViewMode] = useState<CalendarViewMode>('month');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [currentDate, setCurrentDate] = useState<Date>(new Date(2026, 8, 29)); // Sept 29, 2026
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  const loadData = async () => {
+    const evs = await calendarService.getCalendarEvents();
+    setEvents(evs);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   // New Event Form state
   const [formData, setFormData] = useState({
@@ -88,14 +97,14 @@ export const CalendarPage: React.FC = () => {
     setCurrentDate(new Date(2026, 8, 29));
   };
 
-  const handleCreateEvent = (e: React.FormEvent) => {
+  const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
       showToast('Please provide an event title', 'error');
       return;
     }
 
-    const created = calendarService.createCalendarEvent({
+    const created = await calendarService.createCalendarEvent({
       title: formData.title,
       type: formData.type,
       startDate: formData.startDate,
@@ -108,9 +117,9 @@ export const CalendarPage: React.FC = () => {
       targetLink: formData.targetLink || undefined,
     });
 
-    setEvents(calendarService.getCalendarEvents());
+    await loadData();
     setIsCreateOpen(false);
-    showToast(`Event "${created.title}" scheduled successfully`, 'success');
+    showToast(`Event "${created?.title || formData.title}" scheduled successfully`, 'success');
   };
 
   const getEventBadgeClass = (type: CalendarEvent['type']) => {
@@ -488,9 +497,9 @@ export const CalendarPage: React.FC = () => {
 
             <div className="flex items-center justify-between pt-4 border-t border-white/5">
               <button
-                onClick={() => {
-                  calendarService.deleteCalendarEvent(selectedEvent.id);
-                  setEvents(calendarService.getCalendarEvents());
+                onClick={async () => {
+                  await calendarService.deleteCalendarEvent(selectedEvent.id);
+                  await loadData();
                   setSelectedEvent(null);
                   showToast('Event removed from calendar', 'info');
                 }}

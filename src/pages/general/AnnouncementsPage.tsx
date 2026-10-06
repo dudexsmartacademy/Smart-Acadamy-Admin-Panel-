@@ -62,26 +62,29 @@ export const AnnouncementsPage: React.FC = () => {
     author: 'Dr. Alexander Vance (Super Admin)',
   });
 
+  const loadData = async () => {
+    setLoading(true);
+    const list = await announcementService.getAnnouncements();
+    setAnnouncements(list);
+    setLoading(false);
+  };
+
   useEffect(() => {
     loadData();
-    // Load reference datasets for dynamic audience form
-    const c = academicCourseService.getCourses();
-    setCourses(c.map((x) => ({ id: x.id, name: x.name })));
-    const b = academicBatchService.getBatches();
-    setBatches(b.map((x) => ({ id: x.id, name: x.name })));
-    const t = teacherService.getTeachers();
-    setTeachers(t.map((x) => ({ id: x.id, name: x.name })));
-    const s = studentService.getStudents();
-    setStudents(s.map((x) => ({ id: x.id, name: x.fullName })));
+    const loadRefs = async () => {
+      const [c, b, t, s] = await Promise.all([
+        academicCourseService.getCourses(),
+        academicBatchService.getAcademicBatches(),
+        teacherService.getTeachers(),
+        studentService.getStudents(),
+      ]);
+      setCourses(c.map((x) => ({ id: x.id, name: x.name })));
+      setBatches(b.map((x) => ({ id: x.id, name: x.name })));
+      setTeachers(t.map((x) => ({ id: x.id, name: x.fullName })));
+      setStudents(s.map((x) => ({ id: x.id, name: x.fullName })));
+    };
+    loadRefs();
   }, []);
-
-  const loadData = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setAnnouncements(announcementService.getAnnouncements());
-      setLoading(false);
-    }, 150);
-  };
 
   const filteredAnnouncements = useMemo(() => {
     return announcements.filter((a) => {
@@ -121,7 +124,7 @@ export const AnnouncementsPage: React.FC = () => {
     setIsComposerOpen(true);
   };
 
-  const handlePublish = (e: React.FormEvent) => {
+  const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.content.trim()) {
       showToast('Title and content are required', 'error');
@@ -141,7 +144,7 @@ export const AnnouncementsPage: React.FC = () => {
       if (found) finalBatchName = found.name;
     }
 
-    announcementService.createAnnouncement({
+    await announcementService.createAnnouncement({
       title: formData.title,
       content: formData.content,
       audience: formData.audience,
@@ -159,14 +162,14 @@ export const AnnouncementsPage: React.FC = () => {
 
     setIsComposerOpen(false);
     setPreviewStep(false);
-    loadData();
+    await loadData();
     showToast('Announcement published and notifications dispatched to audience', 'success');
   };
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string) => {
     if (confirm(`Delete announcement "${title}"?`)) {
-      announcementService.deleteAnnouncement(id);
-      loadData();
+      await announcementService.deleteAnnouncement(id);
+      await loadData();
       showToast('Announcement deleted', 'info');
       if (selectedAnnouncement?.id === id) {
         setSelectedAnnouncement(null);

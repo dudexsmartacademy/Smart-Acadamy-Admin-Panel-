@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   KeyRound,
   Plus,
@@ -18,22 +18,28 @@ import { useToast } from '../../context/ToastContext';
 
 export const RolesPermissionsPage: React.FC = () => {
   const { showToast } = useToast();
-  const [roles, setRoles] = useState<RolePermission[]>(() => rolePermissionService.getRoles());
-  const [selectedRole, setSelectedRole] = useState<RolePermission>(roles[0] || null);
+  const [roles, setRoles] = useState<RolePermission[]>([]);
+  const [selectedRole, setSelectedRole] = useState<RolePermission | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newRoleName, setNewRoleName] = useState('');
   const [newRoleDesc, setNewRoleDesc] = useState('');
 
-  const loadData = () => {
-    const updated = rolePermissionService.getRoles();
+  const loadData = async () => {
+    const updated = await rolePermissionService.getRoles();
     setRoles(updated);
-    if (selectedRole) {
+    if (!selectedRole && updated.length > 0) {
+      setSelectedRole(updated[0]);
+    } else if (selectedRole) {
       const refreshed = updated.find((r) => r.id === selectedRole.id);
       if (refreshed) setSelectedRole(refreshed);
     }
   };
 
-  const handleTogglePermission = (
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleTogglePermission = async (
     moduleName: string,
     permissionKey:
       | 'canView'
@@ -60,18 +66,18 @@ export const RolesPermissionsPage: React.FC = () => {
       return p;
     });
 
-    const updated = rolePermissionService.updateRole(selectedRole.id, {
+    const updated = await rolePermissionService.updateRole(selectedRole.id, {
       permissions: updatedPermissions,
     });
 
     if (updated) {
       setSelectedRole(updated);
-      loadData();
+      await loadData();
       showToast(`Updated ${moduleName} permissions for ${selectedRole.roleName}`, 'success');
     }
   };
 
-  const handleCreateRole = (e: React.FormEvent) => {
+  const handleCreateRole = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRoleName.trim()) {
       showToast('Please provide a role name', 'error');
@@ -88,8 +94,8 @@ export const RolesPermissionsPage: React.FC = () => {
       'Security & System Audit',
     ];
 
-    const newRole = rolePermissionService.createRole({
-      roleName: newRoleName,
+    const newRole = await rolePermissionService.createRole({
+      roleName: newRoleName as any,
       description: newRoleDesc || 'Custom institutional access policy',
       permissions: defaultModules.map((m) => ({
         module: m,
@@ -107,17 +113,18 @@ export const RolesPermissionsPage: React.FC = () => {
     setNewRoleName('');
     setNewRoleDesc('');
     setIsCreateOpen(false);
-    loadData();
-    setSelectedRole(newRole);
-    showToast(`Role [${newRole.roleName}] created successfully`, 'success');
+    await loadData();
+    if (newRole) {
+      setSelectedRole(newRole);
+      showToast(`Role [${newRole.roleName}] created successfully`, 'success');
+    }
   };
 
-  const handleDeleteRole = (id: string, name: string) => {
+  const handleDeleteRole = async (id: string, name: string) => {
     if (confirm(`Are you sure you want to delete role policy [${name}]?`)) {
-      const success = rolePermissionService.deleteRole(id);
+      const success = await rolePermissionService.deleteRole(id);
       if (success) {
-        loadData();
-        setSelectedRole(roles[0]);
+        await loadData();
         showToast(`Role [${name}] deleted`, 'info');
       } else {
         showToast('Super Admin role cannot be deleted', 'error');

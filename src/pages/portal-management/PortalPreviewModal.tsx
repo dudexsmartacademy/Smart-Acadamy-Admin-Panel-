@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert,
   Eye,
@@ -20,6 +20,7 @@ import {
   Lock,
 } from 'lucide-react';
 import { portalManagementService } from '../../services/portalManagementService';
+import { PortalFeatureControl, PortalNavigationItem } from '../../types';
 
 interface PortalPreviewModalProps {
   portal: 'teacher' | 'student';
@@ -28,13 +29,22 @@ interface PortalPreviewModalProps {
 
 export const PortalPreviewModal: React.FC<PortalPreviewModalProps> = ({ portal, onClose }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const navItems = portalManagementService
-    .getPortalNavigation(portal)
-    .filter((i) => i.visible && i.enabled);
-  const controls =
-    portal === 'teacher'
-      ? portalManagementService.getTeacherPortalControls()
-      : portalManagementService.getStudentPortalControls();
+  const [navItems, setNavItems] = useState<PortalNavigationItem[]>([]);
+  const [controls, setControls] = useState<PortalFeatureControl[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const nav = await portalManagementService.getPortalNavigation(portal);
+      setNavItems(nav.filter((i) => i.visible && i.enabled));
+
+      const ctrl =
+        portal === 'teacher'
+          ? await portalManagementService.getTeacherPortalControls()
+          : await portalManagementService.getStudentPortalControls();
+      setControls(ctrl);
+    };
+    load();
+  }, [portal]);
 
   const getIcon = (iconName: string) => {
     switch (iconName) {

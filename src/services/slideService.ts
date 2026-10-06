@@ -49,13 +49,47 @@ export const createSlideBanner = async (slideData: Partial<SlideBanner>): Promis
   return rowToSlide(data);
 };
 
+export const updateSlideBanner = async (id: string, updates: Partial<SlideBanner>): Promise<SlideBanner | null> => {
+  const payload: Record<string, unknown> = {};
+  if (updates.title !== undefined) payload.title = updates.title;
+  if (updates.subtitle !== undefined) payload.subtitle = updates.subtitle;
+  if (updates.imageUrl !== undefined) payload.image_url = updates.imageUrl;
+  if (updates.ctaText !== undefined) payload.cta_text = updates.ctaText;
+  if (updates.ctaRoute !== undefined) payload.cta_route = updates.ctaRoute;
+  if (updates.audience !== undefined) payload.audience = updates.audience;
+  if (updates.startDate !== undefined) payload.start_date = updates.startDate;
+  if (updates.endDate !== undefined) payload.end_date = updates.endDate;
+  if (updates.displayOrder !== undefined) payload.display_order = updates.displayOrder;
+  if (updates.status !== undefined) payload.status = updates.status;
+
+  const { data, error } = await supabase
+    .from('slide_banners')
+    .update(payload)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error || !data) return null;
+  return rowToSlide(data);
+};
+
 export const deleteSlideBanner = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from('slide_banners').delete().eq('id', id);
+  return !error;
+};
+
+export const toggleSlideBannerStatus = async (id: string): Promise<boolean> => {
+  const { data } = await supabase.from('slide_banners').select('status').eq('id', id).single();
+  if (!data) return false;
+  const newStatus = data.status === 'Active' ? 'Inactive' : 'Active';
+  const { error } = await supabase.from('slide_banners').update({ status: newStatus }).eq('id', id);
   return !error;
 };
 
 export const slideService = {
   getSlideBanners,
   createSlideBanner,
+  updateSlideBanner,
   deleteSlideBanner,
+  toggleSlideBannerStatus,
 };

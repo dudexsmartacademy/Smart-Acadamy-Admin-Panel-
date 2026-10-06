@@ -103,10 +103,19 @@ export const deleteAnnouncement = async (id: string): Promise<boolean> => {
   return !error;
 };
 
+export const subscribeToAnnouncements = (callback: (payload: any) => void) => {
+  return supabase
+    .channel('public:announcements')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, callback)
+    .subscribe();
+};
+
 export const announcementService = {
   getAnnouncements,
   getAnnouncementById,
   createAnnouncement,
   updateAnnouncement,
   deleteAnnouncement,
+  subscribeToAnnouncements,
 };
+

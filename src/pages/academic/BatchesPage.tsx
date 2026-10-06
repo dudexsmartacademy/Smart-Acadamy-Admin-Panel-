@@ -34,18 +34,17 @@ export const BatchesPage: React.FC = () => {
   const { showToast } = useToast();
 
   const [batches, setBatches] = useState<AcademicBatch[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBatch, setEditingBatch] = useState<AcademicBatch | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AcademicBatch | null>(null);
 
-  const courses = getAcademicCourses();
-
   const [formData, setFormData] = useState({
     name: '',
     batchCode: '',
-    courseId: courses[0]?.id || '',
-    courseName: courses[0]?.name || 'Full-Stack Web Development',
+    courseId: '',
+    courseName: '',
     teacherId: 'tch-1',
     teacherName: 'Dr. Sarah Jenkins',
     startDate: '2026-09-01',
@@ -55,8 +54,13 @@ export const BatchesPage: React.FC = () => {
     status: 'Active' as AcademicBatch['status'],
   });
 
-  const loadData = () => {
-    setBatches(getAcademicBatches());
+  const loadData = async () => {
+    const [bList, cList] = await Promise.all([
+      getAcademicBatches(),
+      getAcademicCourses(),
+    ]);
+    setBatches(bList);
+    setCourses(cList);
   };
 
   useEffect(() => {
@@ -112,7 +116,7 @@ export const BatchesPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.batchCode.trim()) {
       showToast('Batch name and code are required.', 'error');
@@ -122,13 +126,13 @@ export const BatchesPage: React.FC = () => {
     const selCourse = courses.find((c) => c.id === formData.courseId);
 
     if (editingBatch) {
-      updateAcademicBatch(editingBatch.id, {
+      await updateAcademicBatch(editingBatch.id, {
         ...formData,
         courseName: selCourse?.name || formData.courseName,
       });
       showToast(`Batch "${formData.name}" updated!`, 'success');
     } else {
-      createAcademicBatch({
+      await createAcademicBatch({
         ...formData,
         courseName: selCourse?.name || formData.courseName,
       });
@@ -136,15 +140,15 @@ export const BatchesPage: React.FC = () => {
     }
 
     setIsModalOpen(false);
-    loadData();
+    await loadData();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteTarget) {
-      deleteAcademicBatch(deleteTarget.id);
+      await deleteAcademicBatch(deleteTarget.id);
       showToast(`Batch "${deleteTarget.name}" deleted.`, 'warning');
       setDeleteTarget(null);
-      loadData();
+      await loadData();
     }
   };
 

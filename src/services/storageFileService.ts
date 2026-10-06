@@ -26,6 +26,26 @@ export const getStorageFiles = async (): Promise<StorageFile[]> => {
   return (data || []).map(rowToFile);
 };
 
+export const createStorageFile = async (fileData: Partial<StorageFile>): Promise<StorageFile | null> => {
+  const { data, error } = await supabase
+    .from('storage_files')
+    .insert({
+      name: fileData.name || 'New File',
+      file_type: fileData.fileType || 'PDF',
+      size_bytes: fileData.sizeBytes || 0,
+      size_formatted: fileData.sizeFormatted || '0 KB',
+      owner_name: fileData.ownerName || 'Super Admin',
+      related_entity: fileData.relatedEntity || '',
+      status: fileData.status || 'Active',
+      download_url: fileData.downloadUrl || '',
+    })
+    .select()
+    .single();
+
+  if (error || !data) return null;
+  return rowToFile(data);
+};
+
 export const deleteStorageFile = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from('storage_files').delete().eq('id', id);
   return !error;
@@ -33,5 +53,6 @@ export const deleteStorageFile = async (id: string): Promise<boolean> => {
 
 export const storageFileService = {
   getStorageFiles,
+  createStorageFile,
   deleteStorageFile,
 };

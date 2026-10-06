@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CreditCard,
@@ -15,12 +15,21 @@ import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { getFees } from '../../services/feeService';
+import { FeeRecord } from '../../types';
 
 export const FeesPage: React.FC = () => {
   const navigate = useNavigate();
-  const fees = getFees();
+  const [fees, setFees] = useState<FeeRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getFees();
+      setFees(data);
+    };
+    load();
+  }, []);
 
   const filtered = fees.filter((f) => {
     if (searchQuery.trim()) {

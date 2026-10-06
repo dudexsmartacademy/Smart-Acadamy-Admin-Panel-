@@ -61,8 +61,9 @@ export const TeacherApplicationsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const loadData = () => {
-    setApplications(teacherApplicationService.getApplications());
+  const loadData = async () => {
+    const list = await teacherApplicationService.getApplications();
+    setApplications(list);
   };
 
   useEffect(() => {
@@ -98,44 +99,43 @@ export const TeacherApplicationsPage: React.FC = () => {
     setIsDetailModalOpen(true);
   };
 
-  const handleUpdateStatus = (appId: string, status: ApplicationStatus, notes?: string) => {
-    teacherApplicationService.updateApplicationStatus(appId, status, notes);
+  const handleUpdateStatus = async (appId: string, status: ApplicationStatus, notes?: string) => {
+    await teacherApplicationService.updateApplicationStatus(appId, status, notes);
     success(
       `Application ${status.toUpperCase()}`,
       `Application has been marked as ${status.replace('_', ' ')}.`
     );
-    loadData();
+    await loadData();
     setIsDetailModalOpen(false);
   };
 
-  const handleConvert = (app: TeacherApplication) => {
-    const result = teacherApplicationService.convertToTeacher(app.id);
-    if (result) {
+  const handleConvert = async (app: TeacherApplication) => {
+    const successResult = await teacherApplicationService.convertToTeacher(app.id);
+    if (successResult) {
       success(
         'Applicant Successfully Converted to Faculty',
-        `${result.teacher.fullName} is now an active faculty member with ID ${result.teacher.teacherId}.`
+        `${app.fullName} is now an active faculty member.`
       );
-      loadData();
-      navigate(`/admin/teachers/${result.teacher.id}`);
+      await loadData();
     } else {
       toastError('Conversion Failed', 'Could not convert applicant into teacher record.');
     }
     setConfirmAction(null);
   };
 
-  const handleConfirmAction = () => {
+  const handleConfirmAction = async () => {
     if (!confirmAction) return;
 
     if (confirmAction.type === 'approve') {
-      handleUpdateStatus(confirmAction.app.id, 'approved', reviewerNotes);
+      await handleUpdateStatus(confirmAction.app.id, 'approved', reviewerNotes);
     } else if (confirmAction.type === 'reject') {
-      handleUpdateStatus(confirmAction.app.id, 'rejected', reviewerNotes);
+      await handleUpdateStatus(confirmAction.app.id, 'rejected', reviewerNotes);
     } else if (confirmAction.type === 'convert') {
-      handleConvert(confirmAction.app);
+      await handleConvert(confirmAction.app);
     } else if (confirmAction.type === 'delete') {
-      teacherApplicationService.deleteApplication(confirmAction.app.id);
+      await teacherApplicationService.deleteApplication(confirmAction.app.id);
       success('Application Deleted', `Removed application ${confirmAction.app.applicationNumber}`);
-      loadData();
+      await loadData();
     }
 
     setConfirmAction(null);

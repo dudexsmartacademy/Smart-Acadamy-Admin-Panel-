@@ -42,20 +42,20 @@ export const ClassesPage: React.FC = () => {
   const [editingClass, setEditingClass] = useState<AcademicClass | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AcademicClass | null>(null);
 
-  const courses = getAcademicCourses();
-  const subjects = getAcademicSubjects();
-  const batches = getAcademicBatches();
+  const [courses, setCourses] = useState<any[]>([]);
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [batches, setBatches] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
     title: '',
-    courseId: courses[0]?.id || '',
-    courseName: courses[0]?.name || 'Full-Stack Web Development',
-    subjectId: subjects[0]?.id || '',
-    subjectName: subjects[0]?.name || 'React & Frontend Architecture',
+    courseId: '',
+    courseName: '',
+    subjectId: '',
+    subjectName: '',
     teacherId: 'tch-1',
     teacherName: 'Dr. Sarah Jenkins',
-    batchId: batches[0]?.id || '',
-    batchName: batches[0]?.name || 'Batch 2026-Alpha',
+    batchId: '',
+    batchName: '',
     classroom: 'Lab 101',
     date: new Date().toISOString().split('T')[0],
     startTime: '09:00 AM',
@@ -63,8 +63,17 @@ export const ClassesPage: React.FC = () => {
     status: 'Scheduled' as AcademicClass['status'],
   });
 
-  const loadData = () => {
-    setClasses(getAcademicClasses());
+  const loadData = async () => {
+    const [clsList, crsList, subList, btcList] = await Promise.all([
+      getAcademicClasses(),
+      getAcademicCourses(),
+      getAcademicSubjects(),
+      getAcademicBatches(),
+    ]);
+    setClasses(clsList);
+    setCourses(crsList);
+    setSubjects(subList);
+    setBatches(btcList);
   };
 
   useEffect(() => {
@@ -127,7 +136,7 @@ export const ClassesPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
       showToast('Class title is required.', 'error');
@@ -146,23 +155,23 @@ export const ClassesPage: React.FC = () => {
     };
 
     if (editingClass) {
-      updateAcademicClass(editingClass.id, payload);
+      await updateAcademicClass(editingClass.id, payload);
       showToast(`Class "${formData.title}" updated!`, 'success');
     } else {
-      createAcademicClass(payload);
+      await createAcademicClass(payload);
       showToast(`Class "${formData.title}" scheduled!`, 'success');
     }
 
     setIsModalOpen(false);
-    loadData();
+    await loadData();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteTarget) {
-      deleteAcademicClass(deleteTarget.id);
+      await deleteAcademicClass(deleteTarget.id);
       showToast(`Class "${deleteTarget.title}" removed.`, 'warning');
       setDeleteTarget(null);
-      loadData();
+      await loadData();
     }
   };
 

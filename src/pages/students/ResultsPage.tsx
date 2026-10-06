@@ -42,18 +42,23 @@ export const ResultsPage: React.FC = () => {
   const [activeResultModal, setActiveResultModal] = useState<StudentResult | null>(null);
   const [isScreenshotZoomed, setIsScreenshotZoomed] = useState(false);
 
-  useEffect(() => {
-    setResults(getResults());
-  }, []);
+  const [batchOptions, setBatchOptions] = useState<string[]>(['All Batches', 'Batch 1', 'Batch 2', 'Batch 3']);
 
-  // Batches
-  const batchOptions = useMemo(() => {
-    const list = getAcademicBatches();
-    const names = ['All Batches', 'Batch 1', 'Batch 2', 'Batch 3'];
-    list.forEach((b) => {
-      if (!names.includes(b.name)) names.push(b.name);
-    });
-    return names;
+  useEffect(() => {
+    const load = async () => {
+      const [data, bts] = await Promise.all([
+        getResults(),
+        getAcademicBatches(),
+      ]);
+      setResults(data);
+
+      const names = ['All Batches', 'Batch 1', 'Batch 2', 'Batch 3'];
+      bts.forEach((b) => {
+        if (!names.includes(b.name)) names.push(b.name);
+      });
+      setBatchOptions(names);
+    };
+    load();
   }, []);
 
   // Assessments

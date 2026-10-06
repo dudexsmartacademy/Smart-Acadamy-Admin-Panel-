@@ -26,17 +26,7 @@ export const StudentProfileDetailPage: React.FC = () => {
 
   const [student, setStudent] = useState<Student | null>(null);
 
-  // Batches
-  const allBatches = useMemo(() => {
-    const list = getAcademicBatches();
-    const batchNames = ['Batch 1', 'Batch 2', 'Batch 3'];
-    list.forEach((b) => {
-      if (!batchNames.includes(b.name)) {
-        batchNames.push(b.name);
-      }
-    });
-    return batchNames;
-  }, []);
+  const [allBatches, setAllBatches] = useState<string[]>(['Batch 1', 'Batch 2', 'Batch 3']);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -63,80 +53,59 @@ export const StudentProfileDetailPage: React.FC = () => {
 
   // Load student data
   useEffect(() => {
-    let s: Student | undefined;
-    if (studentId) {
-      s =
-        studentService.getStudentById(studentId) ||
-        studentService
-          .getStudents()
-          .find((item) => item.id === studentId || item.studentId === studentId);
-    }
+    const load = async () => {
+      const bts = await getAcademicBatches();
+      const batchNames = ['Batch 1', 'Batch 2', 'Batch 3'];
+      bts.forEach((b) => {
+        if (!batchNames.includes(b.name)) {
+          batchNames.push(b.name);
+        }
+      });
+      setAllBatches(batchNames);
 
-    if (!s) {
-      // Fallback default student (Naveen J.K.)
-      s = studentService.getStudents().find((item) => item.id === 'stu-naveen-01') || {
-        id: 'stu-naveen-01',
-        studentId: 'STU-2026-000',
-        fullName: 'Naveen J.K.',
-        email: 'naveen.jk@gmail.com',
-        phone: '+91 98765 43210',
-        whatsappNumber: '+91 98765 43210',
-        alternatePhone: '+91 91234 56789',
-        address: 'No. 42, Tech Corridor Avenue, Bengaluru, Karnataka - 560100',
-        githubUrl: 'https://github.com/naveen-jk',
-        linkedinUrl: 'https://linkedin.com/in/naveen-jk',
-        collegeName: 'DudeX Institute of Technology',
-        collegeMailId: 'naveen.24ad@dudex.edu.in',
-        registerNumber: '24XX001',
-        course: 'B.E. / B.Tech',
-        specialization: 'Full Stack AI Engineering',
-        section: 'Section B',
-        batchName: 'Batch 1',
-        department: 'Artificial Intelligence & Data Science',
-        gender: 'male',
-        dob: '2004-05-15',
-        guardianName: 'Jayakumar',
-        guardianPhone: '+91 91234 56789',
-        guardianEmail: 'jayakumar@gmail.com',
-        emergencyContact: '+91 91234 56789',
-        status: 'active',
-        feeStatus: 'paid',
-        attendancePercentage: 84.6,
-      };
-    }
+      let s: Student | undefined;
+      if (studentId) {
+        s =
+          (await studentService.getStudentById(studentId)) ||
+          (await studentService.getStudents()).find(
+            (item) => item.id === studentId || item.studentId === studentId
+          );
+      }
 
-    setStudent(s);
-    setFormData({
-      fullName: s.fullName || 'Naveen J.K.',
-      email: s.email || 'naveen.jk@gmail.com',
-      whatsappNumber: s.whatsappNumber || s.phone || '+91 98765 43210',
-      alternatePhone: s.alternatePhone || '+91 91234 56789',
-      address:
-        s.address ||
-        'No. 42, Tech Corridor Avenue, Bengaluru, Karnataka - 560100',
-      githubUrl: s.githubUrl || 'https://github.com/naveen-jk',
-      linkedinUrl: s.linkedinUrl || 'https://linkedin.com/in/naveen-jk',
-      collegeName: s.collegeName || 'DudeX Institute of Technology',
-      collegeMailId: s.collegeMailId || `${s.email.split('@')[0]}@dudex.edu.in`,
-      registerNumber: s.registerNumber || s.studentId || '24XX001',
-      course: s.course || s.courseName || 'B.E. / B.Tech',
-      specialization:
-        s.specialization ||
-        (typeof s.careerInterests === 'string'
-          ? s.careerInterests
-          : 'Full Stack AI Engineering'),
-      section: s.section || 'Section B',
-      batchName: s.batchName || s.batch || 'Batch 1',
-      role: 'AI Placement / Software Engineer',
-    });
+      if (s) {
+        setStudent(s);
+        setFormData({
+          fullName: s.fullName || '',
+          email: s.email || '',
+          whatsappNumber: s.whatsappNumber || s.phone || '',
+          alternatePhone: s.alternatePhone || '',
+          address: s.address || '',
+          githubUrl: s.githubUrl || '',
+          linkedinUrl: s.linkedinUrl || '',
+          collegeName: s.collegeName || 'DudeX Institute of Technology',
+          collegeMailId: s.collegeMailId || (s.email ? `${s.email.split('@')[0]}@dudex.edu.in` : ''),
+          registerNumber: s.registerNumber || s.studentId || '',
+          course: s.course || s.courseName || '',
+          specialization:
+            s.specialization ||
+            (typeof s.careerInterests === 'string'
+              ? s.careerInterests
+              : ''),
+          section: s.section || 'Section A',
+          batchName: s.batchName || s.batch || 'Batch 1',
+          role: s.specialization || 'Student Candidate',
+        });
+      }
+    };
+    load();
   }, [studentId]);
 
   // Handle Save
-  const handleSaveAll = () => {
+  const handleSaveAll = async () => {
     if (!student) return;
     setIsSaving(true);
 
-    const updated = studentService.updateStudent(student.id, {
+    const updated = await studentService.updateStudent(student.id, {
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.whatsappNumber,
@@ -156,18 +125,16 @@ export const StudentProfileDetailPage: React.FC = () => {
       batchName: formData.batchName,
     });
 
-    setTimeout(() => {
-      setIsSaving(false);
-      setIsEditingPersonal(false);
-      setIsEditingCollege(false);
-      if (updated) {
-        setStudent(updated);
-      }
-      showToast(
-        `Student profile updated! Moved to ${formData.batchName}`,
-        'success'
-      );
-    }, 300);
+    setIsSaving(false);
+    setIsEditingPersonal(false);
+    setIsEditingCollege(false);
+    if (updated) {
+      setStudent(updated);
+    }
+    showToast(
+      `Student profile updated! Moved to ${formData.batchName}`,
+      'success'
+    );
   };
 
   // Get Initials

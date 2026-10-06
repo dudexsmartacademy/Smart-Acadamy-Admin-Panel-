@@ -34,6 +34,8 @@ export const getRolesPermissions = async (): Promise<RolePermission[]> => {
   }));
 };
 
+export const getRoles = getRolesPermissions;
+
 export const updateRolePermissions = async (roleId: string, modulePermissions: RolePermission['permissions']): Promise<boolean> => {
   await supabase.from('activity_logs').insert({
     action: 'Updated Role Permissions',
@@ -45,7 +47,39 @@ export const updateRolePermissions = async (roleId: string, modulePermissions: R
   return true;
 };
 
+export const updateRole = async (id: string, updates: Partial<RolePermission>): Promise<RolePermission | null> => {
+  if (updates.permissions) {
+    await updateRolePermissions(id, updates.permissions);
+  }
+  const all = await getRolesPermissions();
+  return all.find((r) => r.id === id) || null;
+};
+
+export const createRole = async (roleData: Partial<RolePermission>): Promise<RolePermission | null> => {
+  const { data, error } = await supabase
+    .from('roles')
+    .insert({
+      name: roleData.roleName || 'New Role',
+      description: roleData.description || '',
+    })
+    .select()
+    .single();
+
+  if (error || !data) return null;
+  const all = await getRolesPermissions();
+  return all.find((r) => r.id === data.id) || null;
+};
+
+export const deleteRole = async (id: string): Promise<boolean> => {
+  const { error } = await supabase.from('roles').delete().eq('id', id);
+  return !error;
+};
+
 export const rolePermissionService = {
   getRolesPermissions,
+  getRoles,
   updateRolePermissions,
+  updateRole,
+  createRole,
+  deleteRole,
 };

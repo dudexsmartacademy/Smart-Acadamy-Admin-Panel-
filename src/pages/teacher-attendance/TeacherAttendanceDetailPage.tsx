@@ -114,39 +114,29 @@ export const TeacherAttendanceDetailPage: React.FC =
     /* ===================================================================== */
 
     useEffect(() => {
+      const load = async () => {
+        if (!teacherId) {
+          return;
+        }
 
-      if (!teacherId) {
-        return;
-      }
+        const foundTeacher = await teacherService.getTeacherById(teacherId);
 
+        if (!foundTeacher) {
+          return;
+        }
 
-      const foundTeacher =
-        teacherService.getTeacherById(
-          teacherId
+        setTeacher(foundTeacher);
+
+        const attendance = getTeacherAttendanceDemo(foundTeacher.id);
+
+        setRecords(
+          createDemoAttendance(
+            foundTeacher,
+            attendance
+          )
         );
-
-
-      if (!foundTeacher) {
-        return;
-      }
-
-
-      setTeacher(foundTeacher);
-
-
-      const attendance =
-        getTeacherAttendanceDemo(
-          foundTeacher.id
-        );
-
-
-      setRecords(
-        createDemoAttendance(
-          foundTeacher,
-          attendance
-        )
-      );
-
+      };
+      load();
     }, [teacherId]);
 
 

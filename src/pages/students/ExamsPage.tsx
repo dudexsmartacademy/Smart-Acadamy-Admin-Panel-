@@ -24,26 +24,25 @@ import {
 import { getAcademicCourses } from '../../services/academicCourseService';
 import { getAcademicSubjects } from '../../services/academicSubjectService';
 import { getAcademicBatches } from '../../services/academicBatchService';
-import { StudentExam } from '../../types';
+import { AcademicBatch, AcademicCourse, AcademicSubject, StudentExam } from '../../types';
 
 export const ExamsPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
   const [exams, setExams] = useState<StudentExam[]>([]);
+  const [courses, setCourses] = useState<AcademicCourse[]>([]);
+  const [subjects, setSubjects] = useState<AcademicSubject[]>([]);
+  const [batches, setBatches] = useState<AcademicBatch[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const courses = getAcademicCourses();
-  const subjects = getAcademicSubjects();
-  const batches = getAcademicBatches();
-
   const [formData, setFormData] = useState({
     title: '',
-    courseName: courses[0]?.name || 'Full-Stack Web Development',
-    subjectName: subjects[0]?.name || 'React & Frontend Architecture',
+    courseName: 'Full-Stack Web Development',
+    subjectName: 'React & Frontend Architecture',
     teacherName: 'Dr. Sarah Jenkins',
-    batchName: batches[0]?.name || 'Batch 2026-Alpha',
+    batchName: 'Batch 2026-Alpha',
     startDate: new Date().toISOString().split('T')[0],
     startTime: '10:00 AM',
     endDate: new Date().toISOString().split('T')[0],
@@ -54,8 +53,25 @@ export const ExamsPage: React.FC = () => {
     status: 'Scheduled' as StudentExam['status'],
   });
 
-  const loadData = () => {
-    setExams(getExams());
+  const loadData = async () => {
+    const [exList, crs, sub, bts] = await Promise.all([
+      getExams(),
+      getAcademicCourses(),
+      getAcademicSubjects(),
+      getAcademicBatches(),
+    ]);
+    setExams(exList);
+    setCourses(crs);
+    setSubjects(sub);
+    setBatches(bts);
+    if (crs.length > 0 && sub.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        courseName: crs[0].name,
+        subjectName: sub[0].name,
+        batchName: bts[0]?.name || prev.batchName,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -74,14 +90,14 @@ export const ExamsPage: React.FC = () => {
     return true;
   });
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
       showToast('Exam title is required.', 'error');
       return;
     }
 
-    createExam({
+    await createExam({
       ...formData,
       enrolledStudentsCount: 18,
       attemptsCount: 0,
@@ -89,12 +105,12 @@ export const ExamsPage: React.FC = () => {
 
     showToast(`Exam "${formData.title}" scheduled successfully!`, 'success');
     setIsModalOpen(false);
-    loadData();
+    await loadData();
   };
 
-  const handleStatusChange = (id: string, status: StudentExam['status']) => {
-    updateExamStatus(id, status);
-    loadData();
+  const handleStatusChange = async (id: string, status: StudentExam['status']) => {
+    await updateExamStatus(id, status);
+    await loadData();
     showToast(`Exam marked as ${status}`, 'success');
   };
 

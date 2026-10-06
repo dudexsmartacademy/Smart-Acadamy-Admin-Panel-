@@ -53,8 +53,9 @@ export const StudentQueriesPage: React.FC = () => {
   const [adminResponseText, setAdminResponseText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  const loadData = () => {
-    setQueries(getStudentQueries());
+  const loadData = async () => {
+    const data = await getStudentQueries();
+    setQueries(data);
   };
 
   useEffect(() => {
@@ -130,15 +131,16 @@ export const StudentQueriesPage: React.FC = () => {
   }, [queries]);
 
   // Handle open modal
-  const handleOpenQuery = (query: StudentQuery) => {
+  const handleOpenQuery = async (query: StudentQuery) => {
     setSelectedQuery(query);
     setResolutionStatus((query.status.toLowerCase() as any) || 'in_review');
     setAdminResponseText(query.adminResponse || '');
 
     // Retrieve rich student data
-    let student = getStudentById(query.studentId);
+    let student = await getStudentById(query.studentId);
     if (!student) {
-      student = getStudents().find(
+      const allStus = await getStudents();
+      student = allStus.find(
         (s) => s.id === query.studentId || s.studentId === query.studentId
       );
     }
@@ -146,24 +148,19 @@ export const StudentQueriesPage: React.FC = () => {
   };
 
   // Handle Save Resolution
-  const handleSaveResolution = () => {
+  const handleSaveResolution = async () => {
     if (!selectedQuery) return;
     setIsSaving(true);
 
-    updateStudentQuery(selectedQuery.id, {
-      status: resolutionStatus,
-      adminResponse: adminResponseText.trim(),
-    });
+    await updateStudentQuery(selectedQuery.id, resolutionStatus, adminResponseText.trim());
 
-    setTimeout(() => {
-      setIsSaving(false);
-      showToast(
-        `Query [${selectedQuery.queryCode}] updated to "${resolutionStatus}"!`,
-        'success'
-      );
-      loadData();
-      setSelectedQuery(null);
-    }, 400);
+    setIsSaving(false);
+    showToast(
+      `Query [${selectedQuery.queryCode}] updated to "${resolutionStatus}"!`,
+      'success'
+    );
+    await loadData();
+    setSelectedQuery(null);
   };
 
   // Close dropdowns on outside click

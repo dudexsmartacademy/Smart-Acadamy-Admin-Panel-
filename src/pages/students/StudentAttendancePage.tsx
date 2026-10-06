@@ -19,35 +19,40 @@ import { PageHeader } from '../../components/common/PageHeader';
 import { getStudents } from '../../services/studentService';
 import { getAcademicBatches } from '../../services/academicBatchService';
 import { getStudentAttendance } from '../../services/studentAttendanceService';
-import { Student } from '../../types';
+import { AcademicBatch, Student, StudentAttendance } from '../../types';
 
 export const StudentAttendancePage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Batches
-  const allBatches = useMemo(() => {
-    const list = getAcademicBatches();
-    const batchNames = ['All Batches', 'Batch 1', 'Batch 2', 'Batch 3'];
-    list.forEach((b) => {
-      if (!batchNames.includes(b.name)) {
-        batchNames.push(b.name);
-      }
-    });
-    return batchNames;
-  }, []);
+  const [allBatches, setAllBatches] = useState<string[]>(['All Batches', 'Batch 1', 'Batch 2', 'Batch 3']);
+  const [allStudents, setAllStudents] = useState<Student[]>([]);
+  const [allAttendanceRecords, setAllAttendanceRecords] = useState<StudentAttendance[]>([]);
 
   const [selectedBatch, setSelectedBatch] = useState<string>('All Batches');
   const [isBatchDropdownOpen, setIsBatchDropdownOpen] = useState<boolean>(false);
-
-  // Date
   const [selectedDate, setSelectedDate] = useState<string>('2026-09-08');
-
-  // Search
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Students list from student service
-  const allStudents = useMemo(() => getStudents(), []);
-  const allAttendanceRecords = useMemo(() => getStudentAttendance(), []);
+  useEffect(() => {
+    const load = async () => {
+      const [stus, recs, bts] = await Promise.all([
+        getStudents(),
+        getStudentAttendance(),
+        getAcademicBatches(),
+      ]);
+      setAllStudents(stus);
+      setAllAttendanceRecords(recs);
+
+      const batchNames = ['All Batches', 'Batch 1', 'Batch 2', 'Batch 3'];
+      bts.forEach((b) => {
+        if (!batchNames.includes(b.name)) {
+          batchNames.push(b.name);
+        }
+      });
+      setAllBatches(batchNames);
+    };
+    load();
+  }, []);
 
   // Filtered students by batch and search
   const filteredStudents = useMemo(() => {

@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { useState, useEffect } from 'react';
 import {
   CalendarCheck,
   ChevronRight,
@@ -8,38 +7,27 @@ import {
   Mail,
   ShieldCheck,
 } from 'lucide-react';
-
 import { useNavigate } from 'react-router-dom';
-
 import { PageHeader } from '../../components/common/PageHeader';
 import { Card } from '../../components/common/Card';
 import { Avatar } from '../../components/common/Avatar';
 import { StatusBadge } from '../../components/common/StatusBadge';
-
 import { teacherService } from '../../services/teacherService';
-
-import {
-  getTeacherAttendanceDemo,
-} from '../../data/teacherAttendanceDemo';
-
+import { getTeacherAttendanceDemo } from '../../data/teacherAttendanceDemo';
 import { Teacher } from '../../types';
-
 
 export const TeacherAttendancePage: React.FC = () => {
 
   const navigate = useNavigate();
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
-  /*
-   * Use the existing teacher service.
-   *
-   * The attendance values are NOT stored inside the
-   * teacher object anymore. They come from the shared
-   * attendance data file.
-   */
-  const teachers: Teacher[] =
-    teacherService
-      .getTeachers()
-      .slice(0, 3);
+  useEffect(() => {
+    const load = async () => {
+      const data = await teacherService.getTeachers();
+      setTeachers(data.slice(0, 3));
+    };
+    load();
+  }, []);
 
 
   return (

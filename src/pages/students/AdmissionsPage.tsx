@@ -26,13 +26,14 @@ import {
   createAdmission,
 } from '../../services/admissionService';
 import { getAcademicCourses } from '../../services/academicCourseService';
-import { StudentAdmission } from '../../types';
+import { AcademicCourse, StudentAdmission } from '../../types';
 
 export const AdmissionsPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
   const [admissions, setAdmissions] = useState<StudentAdmission[]>([]);
+  const [courses, setCourses] = useState<AcademicCourse[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -42,18 +43,25 @@ export const AdmissionsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // New Application Form
-  const courses = getAcademicCourses();
   const [newApp, setNewApp] = useState({
     applicantName: '',
     email: '',
     phone: '',
-    courseName: courses[0]?.name || 'Full-Stack Web Development',
+    courseName: 'Full-Stack Web Development',
     qualification: "Bachelor's in Computer Science",
     notes: 'Candidate has 1 year of junior dev experience.',
   });
 
-  const loadData = () => {
-    setAdmissions(getAdmissions());
+  const loadData = async () => {
+    const [adms, crs] = await Promise.all([
+      getAdmissions(),
+      getAcademicCourses(),
+    ]);
+    setAdmissions(adms);
+    setCourses(crs);
+    if (crs.length > 0 && !newApp.courseName) {
+      setNewApp((prev) => ({ ...prev, courseName: crs[0].name }));
+    }
   };
 
   useEffect(() => {
@@ -76,35 +84,35 @@ export const AdmissionsPage: React.FC = () => {
     });
   }, [admissions, searchQuery, statusFilter]);
 
-  const handleStatusChange = (id: string, status: StudentAdmission['status']) => {
-    updateAdmissionStatus(id, status);
-    loadData();
+  const handleStatusChange = async (id: string, status: StudentAdmission['status']) => {
+    await updateAdmissionStatus(id, status);
+    await loadData();
     showToast(`Application status updated to ${status}`, 'success');
   };
 
-  const handleConvert = () => {
+  const handleConvert = async () => {
     if (!selectedAdmission) return;
-    const newStudent = convertAdmissionToStudent(selectedAdmission.id);
-    if (newStudent) {
-      showToast(`Applicant converted to Student: ${newStudent.fullName}!`, 'success');
+    const res = await convertAdmissionToStudent(selectedAdmission.id);
+    if (res.success && res.student) {
+      showToast(`Applicant converted to Student: ${res.student.full_name}!`, 'success');
       setIsConvertModalOpen(false);
-      loadData();
-      navigate(`/admin/students/${newStudent.id}`);
+      await loadData();
+      navigate(`/admin/students/${res.student.id}`);
     } else {
       showToast('Conversion failed. Please try again.', 'error');
     }
   };
 
-  const handleCreateApplication = (e: React.FormEvent) => {
+  const handleCreateApplication = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newApp.applicantName.trim() || !newApp.email.trim() || !newApp.phone.trim()) {
       showToast('Please fill all required fields.', 'error');
       return;
     }
-    createAdmission(newApp);
+    await createAdmission(newApp);
     showToast('New admission application registered!', 'success');
     setIsCreateModalOpen(false);
-    loadData();
+    await loadData();
   };
 
   return (

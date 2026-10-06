@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sliders,
   Plus,
@@ -19,8 +19,8 @@ import { useToast } from '../../context/ToastContext';
 
 export const SlideBannersPage: React.FC = () => {
   const { showToast } = useToast();
-  const [slides, setSlides] = useState<SlideBanner[]>(() => slideService.getSlideBanners());
-  const [previewSlide, setPreviewSlide] = useState<SlideBanner | null>(slides[0] || null);
+  const [slides, setSlides] = useState<SlideBanner[]>([]);
+  const [previewSlide, setPreviewSlide] = useState<SlideBanner | null>(null);
 
   // Form modal
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -39,14 +39,20 @@ export const SlideBannersPage: React.FC = () => {
     status: 'Active' as SlideBanner['status'],
   });
 
-  const loadData = () => {
-    const data = slideService.getSlideBanners();
+  const loadData = async () => {
+    const data = await slideService.getSlideBanners();
     setSlides(data);
-    if (previewSlide) {
+    if (!previewSlide && data.length > 0) {
+      setPreviewSlide(data[0]);
+    } else if (previewSlide) {
       const current = data.find((s) => s.id === previewSlide.id);
       if (current) setPreviewSlide(current);
     }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleOpenCreate = () => {
     setEditingSlide(null);
@@ -83,7 +89,7 @@ export const SlideBannersPage: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleSaveForm = (e: React.FormEvent) => {
+  const handleSaveForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
       showToast('Title is required', 'error');
@@ -91,30 +97,30 @@ export const SlideBannersPage: React.FC = () => {
     }
 
     if (editingSlide) {
-      slideService.updateSlideBanner(editingSlide.id, formData);
+      await slideService.updateSlideBanner(editingSlide.id, formData);
       showToast('Slide banner updated', 'success');
     } else {
-      slideService.createSlideBanner(formData);
+      await slideService.createSlideBanner(formData);
       showToast('New slide banner published', 'success');
     }
 
     setIsFormOpen(false);
-    loadData();
+    await loadData();
   };
 
-  const handleToggleStatus = (id: string) => {
-    slideService.toggleSlideBannerStatus(id);
-    loadData();
+  const handleToggleStatus = async (id: string) => {
+    await slideService.toggleSlideBannerStatus(id);
+    await loadData();
     showToast('Banner visibility toggled', 'info');
   };
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string) => {
     if (confirm(`Delete banner "${title}"?`)) {
-      slideService.deleteSlideBanner(id);
-      loadData();
+      await slideService.deleteSlideBanner(id);
+      await loadData();
       showToast('Banner deleted', 'info');
       if (previewSlide?.id === id) {
-        setPreviewSlide(slides[0] || null);
+        setPreviewSlide(null);
       }
     }
   };

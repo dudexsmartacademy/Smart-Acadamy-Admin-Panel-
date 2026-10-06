@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   ChevronRight,
@@ -28,10 +28,15 @@ export const TeacherLeavePage: React.FC = () => {
   const navigate = useNavigate();
 
 
-  const teachers: Teacher[] =
-    teacherService
-      .getTeachers()
-      .slice(0, 3);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await teacherService.getTeachers();
+      setTeachers(data.slice(0, 3));
+    };
+    load();
+  }, []);
 
 
   return (

@@ -57,32 +57,26 @@ export const TeacherLeaveDetailPage: React.FC = () => {
 
 
   useEffect(() => {
+    const load = async () => {
+      if (!teacherId) {
+        return;
+      }
 
-    if (!teacherId) {
-      return;
-    }
+      const foundTeacher = await teacherService.getTeacherById(teacherId);
 
+      if (!foundTeacher) {
+        return;
+      }
 
-    const foundTeacher =
-      teacherService.getTeacherById(
-        teacherId
+      setTeacher(foundTeacher);
+
+      setLeaveData(
+        getTeacherLeaveDemo(
+          foundTeacher.id
+        )
       );
-
-
-    if (!foundTeacher) {
-      return;
-    }
-
-
-    setTeacher(foundTeacher);
-
-
-    setLeaveData(
-      getTeacherLeaveDemo(
-        foundTeacher.id
-      )
-    );
-
+    };
+    load();
   }, [teacherId]);
 
 

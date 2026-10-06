@@ -46,7 +46,7 @@ export const LoginPage: React.FC = () => {
     setErrors({});
 
     try {
-      const res = await login(email, password, rememberMe);
+      const res = await login(email, password);
       if (res.success) {
         success('Welcome Back, Administrator', 'Logged into DUDEx Smart Academy Control Center.');
         navigate('/admin/dashboard', { replace: true });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GraduationCap,
   Users,
@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   ExternalLink,
 } from 'lucide-react';
-import { PortalFeatureControl } from '../../types';
+import { PortalFeatureControl, Teacher } from '../../types';
 import { portalManagementService } from '../../services/portalManagementService';
 import { teacherService } from '../../services/teacherService';
 import { useToast } from '../../context/ToastContext';
@@ -21,13 +21,24 @@ import { PortalPreviewModal } from './PortalPreviewModal';
 
 export const TeacherPortalControlPage: React.FC = () => {
   const { showToast } = useToast();
-  const [controls, setControls] = useState<PortalFeatureControl[]>(() =>
-    portalManagementService.getTeacherPortalControls()
-  );
-  const [teachers] = useState(() => teacherService.getTeachers());
+  const [controls, setControls] = useState<PortalFeatureControl[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTarget, setSelectedTarget] = useState<string>('all');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  const loadData = async () => {
+    const [ctrls, tList] = await Promise.all([
+      portalManagementService.getTeacherPortalControls(),
+      teacherService.getTeachers(),
+    ]);
+    setControls(ctrls);
+    setTeachers(tList);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const categories = ['all', 'ACADEMIC', 'LEARNING', 'ACCOUNT'];
 
@@ -36,25 +47,25 @@ export const TeacherPortalControlPage: React.FC = () => {
     return c.category === activeCategory;
   });
 
-  const handleToggle = (id: string, field: keyof PortalFeatureControl) => {
+  const handleToggle = async (id: string, field: keyof PortalFeatureControl) => {
     const item = controls.find((c) => c.id === id);
     if (!item) return;
 
     const newValue = !item[field];
-    const updated = portalManagementService.updateTeacherPortalControl(id, {
+    const updated = await portalManagementService.updateTeacherPortalControl(id, {
       [field]: newValue,
     });
 
     if (updated) {
-      setControls(portalManagementService.getTeacherPortalControls());
+      await loadData();
       showToast(`Updated ${item.label} [${String(field)}: ${newValue ? 'ON' : 'OFF'}]`, 'success');
     }
   };
 
-  const handleResetDefaults = () => {
+  const handleResetDefaults = async () => {
     if (confirm('Reset Teacher Portal feature matrix to system defaults?')) {
-      const reset = portalManagementService.resetTeacherPortalControls();
-      setControls(reset);
+      await portalManagementService.resetTeacherPortalControls();
+      await loadData();
       showToast('Teacher Portal permissions restored to default', 'info');
     }
   };
@@ -125,7 +136,7 @@ export const TeacherPortalControlPage: React.FC = () => {
             <option value="role_adjunct">Adjunct Lecturers</option>
             {teachers.map((t) => (
               <option key={t.id} value={t.id}>
-                Individual Override: {t.name} ({t.designation})
+                Individual Override: {t.fullName} ({t.designation})
               </option>
             ))}
           </select>

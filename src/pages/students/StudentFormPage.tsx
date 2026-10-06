@@ -120,8 +120,8 @@ export const StudentFormPage: React.FC = () => {
             accountEmail: existing.accountEmail || existing.email,
             temporaryPassword: '••••••••',
             status: existing.status,
-            skills: existing.skills?.join(', ') || '',
-            careerInterests: existing.careerInterests || '',
+            skills: Array.isArray(existing.skills) ? existing.skills.join(', ') : (existing.skills || ''),
+            careerInterests: Array.isArray(existing.careerInterests) ? existing.careerInterests.join(', ') : (existing.careerInterests || ''),
             notes: existing.notes || '',
           });
         } else {
@@ -163,10 +163,10 @@ export const StudentFormPage: React.FC = () => {
       return;
     }
 
-    const payload = {
+    const payload: Partial<Student> = {
       fullName: formData.fullName,
       dob: formData.dob,
-      gender: formData.gender,
+      gender: formData.gender as any,
       phone: formData.phone,
       email: formData.email,
       address: formData.address,
