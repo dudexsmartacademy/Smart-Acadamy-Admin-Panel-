@@ -68,13 +68,13 @@ export const StudentPerformancePage: React.FC = () => {
   ];
 
   const overallAvgExam = useMemo(() => {
-    if (results.length === 0) return 85;
-    const sum = results.reduce((acc, curr) => acc + curr.percentage, 0);
+    if (results.length === 0) return 0;
+    const sum = results.reduce((acc, curr) => acc + (curr.percentage || 0), 0);
     return Math.round(sum / results.length);
   }, [results]);
 
   const overallAvgAtt = useMemo(() => {
-    if (students.length === 0) return 88;
+    if (students.length === 0) return 0;
     const sum = students.reduce((acc, curr) => acc + (curr.attendancePercentage || 0), 0);
     return Math.round(sum / students.length);
   }, [students]);

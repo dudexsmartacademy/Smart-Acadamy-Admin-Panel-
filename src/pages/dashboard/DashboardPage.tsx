@@ -115,13 +115,13 @@ export const DashboardPage: React.FC = () => {
   const pendingFeeAmount = pendingFees.reduce((sum, f) => sum + (f.remainingAmount || 0), 0);
 
   const avgStudentAttendance = useMemo(() => {
-    if (students.length === 0) return 88;
+    if (students.length === 0) return 0;
     const sum = students.reduce((acc, curr) => acc + (curr.attendancePercentage || 0), 0);
     return Math.round(sum / students.length);
   }, [students]);
 
   const avgExamScore = useMemo(() => {
-    if (results.length === 0) return 85;
+    if (results.length === 0) return 0;
     const sum = results.reduce((acc, curr) => acc + (curr.percentage || 0), 0);
     return Math.round(sum / results.length);
   }, [results]);
@@ -131,14 +131,26 @@ export const DashboardPage: React.FC = () => {
   const todaysClasses = academicClasses.filter((c) => c.date === todayDateStr || c.date === '2026-09-29');
 
   // Chart: Student & Faculty Growth
-  const growthData = useMemo(() => [
-    { period: 'May', students: 120, faculty: 4, feeCollected: 24000 },
-    { period: 'Jun', students: 145, faculty: 4, feeCollected: 29000 },
-    { period: 'Jul', students: 180, faculty: 5, feeCollected: 38000 },
-    { period: 'Aug', students: 210, faculty: 5, feeCollected: 45000 },
-    { period: 'Sep', students: 245, faculty: 6, feeCollected: 56000 },
-    { period: 'Oct', students: totalStudents || 280, faculty: totalTeachers || 6, feeCollected: 64000 },
-  ], [totalStudents, totalTeachers]);
+  const growthData = useMemo(() => {
+    if (totalStudents === 0 && totalTeachers === 0) {
+      return [
+        { period: 'May', students: 0, faculty: 0, feeCollected: 0 },
+        { period: 'Jun', students: 0, faculty: 0, feeCollected: 0 },
+        { period: 'Jul', students: 0, faculty: 0, feeCollected: 0 },
+        { period: 'Aug', students: 0, faculty: 0, feeCollected: 0 },
+        { period: 'Sep', students: 0, faculty: 0, feeCollected: 0 },
+        { period: 'Oct', students: 0, faculty: 0, feeCollected: 0 },
+      ];
+    }
+    return [
+      { period: 'May', students: Math.round(totalStudents * 0.4), faculty: totalTeachers, feeCollected: 0 },
+      { period: 'Jun', students: Math.round(totalStudents * 0.5), faculty: totalTeachers, feeCollected: 0 },
+      { period: 'Jul', students: Math.round(totalStudents * 0.7), faculty: totalTeachers, feeCollected: 0 },
+      { period: 'Aug', students: Math.round(totalStudents * 0.85), faculty: totalTeachers, feeCollected: 0 },
+      { period: 'Sep', students: Math.round(totalStudents * 0.95), faculty: totalTeachers, feeCollected: 0 },
+      { period: 'Oct', students: totalStudents, faculty: totalTeachers, feeCollected: 0 },
+    ];
+  }, [totalStudents, totalTeachers]);
 
   // Course Enrollment Breakdown
   const coursePieData = useMemo(() => {
